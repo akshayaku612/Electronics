@@ -1,0 +1,264 @@
+m255
+K4
+z2
+!s11f vlog 2020.1 2020.02, Feb 28 2020
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 dD:/Akshay/github-personal/Electronics/Project1
+valu
+Z1 !s110 1618105568
+!i10b 1
+!s100 j79;FR8@D_8JgfVK6lZnS3
+Z2 !s11b Dg1SIo80bB@j0V0VzS_@n1
+I1ebjEY;z>5N:TBJgE69:>3
+Z3 VDg1SIo80bB@j0V0VzS_@n1
+R0
+Z4 w1603682602
+Z5 8D:/Akshay/github-personal/Electronics/Project1/project_main.v
+Z6 FD:/Akshay/github-personal/Electronics/Project1/project_main.v
+!i122 0
+L0 121 20
+Z7 OV;L;2020.1;71
+r1
+!s85 0
+31
+Z8 !s108 1618105568.000000
+!s107 D:/Akshay/github-personal/Electronics/Project1/project_main.v|
+Z9 !s90 -reportprogress|300|-work|work|D:/Akshay/github-personal/Electronics/Project1/project_main.v|
+!i113 1
+Z10 o-work work
+Z11 tCvgOpt 0
+vctr
+R1
+!i10b 1
+!s100 @U7NE<D?4G]Wc56jV_F_T1
+R2
+IYdbN1E8Q@cFTbLU8RaeC=0
+R3
+R0
+R4
+R5
+R6
+!i122 0
+L0 479 340
+R7
+r1
+!s85 0
+31
+R8
+Z12 !s107 D:/Akshay/github-personal/Electronics/Project1/project_main.v|
+R9
+!i113 1
+R10
+R11
+vdatapath
+R1
+!i10b 1
+!s100 Rg0k]^:]In=cWAB903XA;1
+R2
+I@P40cCSGjeDGdo65[`1Zn3
+R3
+R0
+R4
+R5
+R6
+!i122 0
+L0 861 93
+R7
+r1
+!s85 0
+31
+R8
+R12
+R9
+!i113 1
+R10
+R11
+vfull_adder
+R1
+!i10b 1
+!s100 j^<Vdc>;Ve:CmIoacAbJZ3
+R2
+I39lG=m37]j0fMRj<CGVeo2
+R3
+R0
+R4
+R5
+R6
+!i122 0
+L0 16 17
+R7
+r1
+!s85 0
+31
+R8
+R12
+R9
+!i113 1
+R10
+R11
+vhalf_adder
+R1
+!i10b 1
+!s100 6K^nKR8T3KP9>FZa`YUon2
+R2
+INKbfEXB:UB>H1;Ped<i5n0
+R3
+R0
+R4
+R5
+R6
+!i122 0
+L0 2 12
+R7
+r1
+!s85 0
+31
+R8
+R12
+R9
+!i113 1
+R10
+R11
+vmy16bitadder
+R1
+!i10b 1
+!s100 Vfj_8XGE2_Kg@[Pnieo]53
+R2
+IjXb5T:8eZJB@Jb9I`U`3c1
+R3
+R0
+R4
+R5
+R6
+!i122 0
+L0 34 22
+R7
+r1
+!s85 0
+31
+R8
+R12
+R9
+!i113 1
+R10
+R11
+vmy8bitmultiplier
+R1
+!i10b 1
+!s100 n1ONi5C`5oIN=IDekjO1V2
+R2
+I2E<h7l2O1J:nhdmz32e]60
+R3
+R0
+R4
+R5
+R6
+!i122 0
+L0 57 44
+R7
+r1
+!s85 0
+31
+R8
+R12
+R9
+!i113 1
+R10
+R11
+vproj1
+R1
+!i10b 1
+!s100 CkH7JO55F9TXXONjPEWXQ3
+R2
+IIC;f_M@Jb2gP`YPHX7Lo71
+R3
+R0
+R4
+R5
+R6
+!i122 0
+L0 955 65
+R7
+r1
+!s85 0
+31
+R8
+R12
+R9
+!i113 1
+R10
+R11
+vproj1_tb
+R1
+!i10b 1
+!s100 QDH=9=GBZ4V`l`VQ1>1:;2
+R2
+IGn2OGKn1R=UNi6o^UiX;E3
+R3
+R0
+R4
+R5
+R6
+!i122 0
+L0 1021 27
+R7
+r1
+!s85 0
+31
+R8
+R12
+R9
+!i113 1
+R10
+R11
+vram
+R1
+!i10b 1
+!s100 bIR3IjlL]nkCbESaBV2bG3
+R2
+IomafW8b3H^k;W`188iNV12
+R3
+R0
+R4
+R5
+R6
+!i122 0
+L0 103 15
+R7
+r1
+!s85 0
+31
+R8
+R12
+R9
+!i113 1
+R10
+R11
+vregisters
+R1
+!i10b 1
+!s100 GlnFJQ:;fgN98VY36Kd5E2
+R2
+I]djHn3`imLiZiQiYdm]A^0
+R3
+R0
+R4
+R5
+R6
+!i122 0
+L0 822 38
+R7
+r1
+!s85 0
+31
+R8
+R12
+R9
+!i113 1
+R10
+R11

@@ -1,0 +1,195 @@
+m255
+K4
+z2
+!s11f vlog 2020.1 2020.02, Feb 28 2020
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 dD:/Akshay/github-personal/Electronics/Encryption_Decryption-Verilog
+vfull_adder
+Z1 !s110 1618104995
+!i10b 1
+!s100 DMLLdSgME;EY96@LF<?L40
+Z2 !s11b Dg1SIo80bB@j0V0VzS_@n1
+I0E<_fOEUcgd`9bL6a7^_V1
+Z3 VDg1SIo80bB@j0V0VzS_@n1
+R0
+Z4 w1618103314
+Z5 8D:/Akshay/github-personal/Electronics/Encryption_Decryption-Verilog/encrypt_decrypt.v
+Z6 FD:/Akshay/github-personal/Electronics/Encryption_Decryption-Verilog/encrypt_decrypt.v
+!i122 0
+L0 18 17
+Z7 OV;L;2020.1;71
+r1
+!s85 0
+31
+Z8 !s108 1618104995.000000
+!s107 D:/Akshay/github-personal/Electronics/Encryption_Decryption-Verilog/encrypt_decrypt.v|
+Z9 !s90 -reportprogress|300|-work|work|D:/Akshay/github-personal/Electronics/Encryption_Decryption-Verilog/encrypt_decrypt.v|
+!i113 1
+Z10 o-work work
+Z11 tCvgOpt 0
+vfullsubtractor
+R1
+!i10b 1
+!s100 jGGb:V`K@fGFIi?JzXhoA3
+R2
+IjVE5DRNo5g0Xf0MCM;5K=2
+R3
+R0
+R4
+R5
+R6
+!i122 0
+L0 135 5
+R7
+r1
+!s85 0
+31
+R8
+Z12 !s107 D:/Akshay/github-personal/Electronics/Encryption_Decryption-Verilog/encrypt_decrypt.v|
+R9
+!i113 1
+R10
+R11
+vhalf_adder
+R1
+!i10b 1
+!s100 5W5Ii:VJJUhO0e>k0k[iO2
+R2
+IGLIIa1kHK?lk5WjhV_=FA2
+R3
+R0
+R4
+R5
+R6
+!i122 0
+L0 2 14
+R7
+r1
+!s85 0
+31
+R8
+R12
+R9
+!i113 1
+R10
+R11
+vmy32bitadder
+R1
+!i10b 1
+!s100 A5zhB8:_cOL;TIANOc>RQ0
+R2
+I3Zc;Vde>?cz@g4>MDI98a1
+R3
+R0
+R4
+R5
+R6
+!i122 0
+L0 36 38
+R7
+r1
+!s85 0
+31
+R8
+R12
+R9
+!i113 1
+R10
+R11
+vmyexp
+R1
+!i10b 1
+!s100 H?8D4Y^_1i@^0MnAN?z4O1
+R2
+IgczL5Dz9j;kFDf53H7[Rb3
+R3
+R0
+R4
+R5
+R6
+!i122 0
+L0 75 56
+R7
+r1
+!s85 0
+31
+R8
+R12
+R9
+!i113 1
+R10
+R11
+vmymodfunc
+R1
+!i10b 1
+!s100 gT>EU4U`Z0g86^1lY5d>S1
+R2
+I_z:TB`ndLKOAJei[CN8D11
+R3
+R0
+R4
+R5
+R6
+!i122 0
+L0 141 43
+R7
+r1
+!s85 0
+31
+R8
+R12
+R9
+!i113 1
+R10
+R11
+vproj2
+R1
+!i10b 1
+!s100 RDe`0jR^D31SigML]IgOz3
+R2
+IP:DZheF96YC;BK>A04oC63
+R3
+R0
+R4
+R5
+R6
+!i122 0
+L0 185 112
+R7
+r1
+!s85 0
+31
+R8
+R12
+R9
+!i113 1
+R10
+R11
+vproj2_tb
+R1
+!i10b 1
+!s100 =dMPiD_iBXRK`b_VfK6Gc1
+R2
+IJE@OGNdiK?TlNNLPVgT1M1
+R3
+R0
+R4
+R5
+R6
+!i122 0
+L0 299 42
+R7
+r1
+!s85 0
+31
+R8
+R12
+R9
+!i113 1
+R10
+R11
