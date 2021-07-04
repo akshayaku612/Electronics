@@ -7,4 +7,4 @@ The microcontroller designed in this project is a simplified version of a CPU.
 Implementing RSA Encryption
 
 ## 3) Low Pass Filter Model - COMSOL
-Model and Simulation of an Equal Ripple Microstrip Low-pass Filter
+Model and simulation of an Equal Ripple Microstrip Low-pass Filter
