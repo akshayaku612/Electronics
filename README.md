@@ -3,9 +3,11 @@ Below is a list of some of the projects I worked on in various applications of E
 
 ## 1) [Hardware Modelling](https://github.com/akshayks612/Electronics/tree/verilog)
 
-* CPU Design using Verilog
-* Public Key Encryption using Verilog
+* CPU Design - Verilog
+* Public Key Encryption - Verilog
+* Low Pass Filter Model - COMSOL
 
 ## 2) [Electronics Design](https://github.com/akshayks612/Electronics/tree/digital-circuit-assembly-and-analysis)
 
-* Digital Circuit Analysis using AD2
+* Digital Circuit Analysis - AD2
+* Test Stand Breakout Board - PCB Design and PCBA
