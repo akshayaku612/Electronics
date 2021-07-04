@@ -1,4 +1,4 @@
-Modelling an Equal Ripple Microstrip Low-pass Filter using COMSOL. The input parameters for the filter are as follows:
+Model and simulation of an Equal Ripple Microstrip Low-pass Filter using COMSOL. The input parameters for the filter are as follows:
 
 * Circuit Material - Rogers3
 * Relative Permitivity - 3
