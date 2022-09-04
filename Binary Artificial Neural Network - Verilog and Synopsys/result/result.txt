@@ -1,0 +1,4 @@
+area= 206.15um2
+Number of cycles= 7
+clock period= 4.25ns
+performance= 6132.9625
