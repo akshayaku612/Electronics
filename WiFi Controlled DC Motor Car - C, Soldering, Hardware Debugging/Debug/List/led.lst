@@ -1,0 +1,127 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          30/Nov/2021  21:13:11
+# Copyright 1996-2021 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for MSP430, 8K KickStart Edition 7.21
+#
+#    __rt_version  =  3
+#    __double_size =  32
+#    __reg_r4      =  free
+#    __reg_r5      =  free
+#    __pic         =  no
+#    __core        =  430X
+#    __data_model  =  small
+#    __code_model  =  large
+#    Source file   =  
+#        D:\Akshay\NCSU\4th year\Fall 2021\ECE
+#        306\Project\KamalapuramSridhar_Akshay\led.c
+#    Command line  =  
+#        -f C:\Users\aku_1\AppData\Local\Temp\EW5680.tmp ("D:\Akshay\NCSU\4th
+#        year\Fall 2021\ECE 306\Project\KamalapuramSridhar_Akshay\led.c" -lC
+#        "D:\Akshay\NCSU\4th year\Fall 2021\ECE
+#        306\Project\KamalapuramSridhar_Akshay\Debug\List" -o
+#        "D:\Akshay\NCSU\4th year\Fall 2021\ECE
+#        306\Project\KamalapuramSridhar_Akshay\Debug\Obj" --no_cse --no_unroll
+#        --no_inline --no_code_motion --no_tbaa --debug -D__MSP430FR2355__ -e
+#        --double=32 --dlib_config "C:\Program Files (x86)\IAR Systems\Embedded
+#        Workbench 8.5\430\lib\dlib\dl430xlsfn.h" -I ./ --core=430X
+#        --data_model=small -On --multiplier=32 --hw_workaround=CPU40
+#        --code_model=large)
+#    Locale        =  English_USA.1252
+#    List file     =  
+#        D:\Akshay\NCSU\4th year\Fall 2021\ECE
+#        306\Project\KamalapuramSridhar_Akshay\Debug\List\led.lst
+#    Object file   =  
+#        D:\Akshay\NCSU\4th year\Fall 2021\ECE
+#        306\Project\KamalapuramSridhar_Akshay\Debug\Obj\led.r43
+#
+###############################################################################
+
+D:\Akshay\NCSU\4th year\Fall 2021\ECE 306\Project\KamalapuramSridhar_Akshay\led.c
+      1          // ------------------------------------------------------------------------------
+      2          //
+      3          //  Description: This file contains the code to initialize both the red and green led.
+      4          // It contains a function Init_LEDs that turns on both the red and green LEDs
+      5          //
+      6          //  Akshay Kamalapuram Sridhar
+      7          //  Sept 2021
+      8          //  Built with IAR Embedded Workbench Version: V7.21.1
+      9          // ------------------------------------------------------------------------------
+     10          
+     11          #include  "macros.h"
+
+  #define end (8)
+          ^
+"D:\Akshay\NCSU\4th year\Fall 2021\ECE 306\Project\KamalapuramSridhar_Akshay\macros.h",211  Warning[Pe047]: 
+          incompatible redefinition of macro "end" (declared at line 211)
+     12          #include  "msp430.h"
+
+   \                                 In  segment DATA16_AN, at 0x202
+   \   union <unnamed> _A_PAOUT_L
+   \                     _A_PAOUT_L:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_AN, at 0x242
+   \   union <unnamed> _A_PCOUT_L
+   \                     _A_PCOUT_L:
+   \   000000                DS8 2
+     13          #include  "functions.h"
+     14          
+     15          void Init_LEDs(void);
+     16          
+     17          // ------------------------------------------------------------------------------
+     18          //
+     19          //  Description: This file contains the code to initialize both the red and green led.
+     20          // It contains a function Init_LEDs that turns on both the red and green LEDs
+     21          //
+     22          //  Akshay Kamalapuram Sridhar
+     23          //  Sept 2021
+     24          //  Built with IAR Embedded Workbench Version: V7.21.1
+     25          //
+     26          //  Ports: The POUT bits of P1.0 and P6.0 are changed to 0. They are configured as GPIO pins.
+     27          //  Alternate functions for P1.0: UCB0STE, SMCLK, VSS, ADC
+     28          //  Alternate functions for P6.0: TB3.CCI1A, TB3.1
+     29          // ------------------------------------------------------------------------------
+     30          
+
+   \                                 In  segment CODE, align 2
+     31          void Init_LEDs(void){
+   \                     Init_LEDs:
+     32            //------------------------------------------------------------------------------
+     33            // LED Configurations
+     34            //------------------------------------------------------------------------------
+     35            // Turns on both LEDs
+     36            P1OUT &= ~RED_LED;
+   \   000000   D2C30202     BIC.B   #0x1, &0x202
+     37            P6OUT &= ~GRN_LED;
+   \   000004   F2C040004302 BIC.B   #0x40, &0x243
+     38            //------------------------------------------------------------------------------
+     39          }
+   \   00000A   1001         RETA
+   \   00000C                REQUIRE _A_PAOUT_L
+   \   00000C                REQUIRE _A_PCOUT_L
+
+   Maximum stack usage in bytes:
+
+   CSTACK Function
+   ------ --------
+      4   Init_LEDs
+
+
+   Segment part sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      12  Init_LEDs
+       2  _A_PAOUT_L
+       2  _A_PCOUT_L
+
+ 
+ 12 bytes in segment CODE
+  4 bytes in segment DATA16_AN
+ 
+ 12 bytes of CODE memory
+  0 bytes of DATA memory (+ 4 bytes shared)
+
+Errors: none
+Warnings: 1

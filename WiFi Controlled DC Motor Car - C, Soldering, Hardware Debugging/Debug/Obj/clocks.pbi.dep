@@ -1,0 +1,9 @@
+clocks.pbi: \
+  D:\Akshay\NCSU\4th\ year\Fall\ 2021\ECE\ 306\Project\KamalapuramSridhar_Akshay\clocks.c \
+  D:\Akshay\NCSU\4th\ year\Fall\ 2021\ECE\ 306\Project\KamalapuramSridhar_Akshay/functions.h \
+  D:\Akshay\NCSU\4th\ year\Fall\ 2021\ECE\ 306\Project\KamalapuramSridhar_Akshay/macros.h \
+  C:\Program\ Files\ (x86)\IAR\ Systems\Embedded\ Workbench\ 8.5\430\inc\msp430.h \
+  C:\Program\ Files\ (x86)\IAR\ Systems\Embedded\ Workbench\ 8.5\430\inc/msp430fr2355.h \
+  C:\Program\ Files\ (x86)\IAR\ Systems\Embedded\ Workbench\ 8.5\430\inc/in430.h \
+  C:\Program\ Files\ (x86)\IAR\ Systems\Embedded\ Workbench\ 8.5\430\inc/intrinsics.h \
+  C:\Program\ Files\ (x86)\IAR\ Systems\Embedded\ Workbench\ 8.5\430\inc/legacy.h

@@ -1,0 +1,159 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          30/Nov/2021  21:13:10
+# Copyright 1996-2021 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for MSP430, 8K KickStart Edition 7.21
+#
+#    __rt_version  =  3
+#    __double_size =  32
+#    __reg_r4      =  free
+#    __reg_r5      =  free
+#    __pic         =  no
+#    __core        =  430X
+#    __data_model  =  small
+#    __code_model  =  large
+#    Source file   =  
+#        D:\Akshay\NCSU\4th year\Fall 2021\ECE
+#        306\Project\KamalapuramSridhar_Akshay\init.c
+#    Command line  =  
+#        -f C:\Users\aku_1\AppData\Local\Temp\EW54E8.tmp ("D:\Akshay\NCSU\4th
+#        year\Fall 2021\ECE 306\Project\KamalapuramSridhar_Akshay\init.c" -lC
+#        "D:\Akshay\NCSU\4th year\Fall 2021\ECE
+#        306\Project\KamalapuramSridhar_Akshay\Debug\List" -o
+#        "D:\Akshay\NCSU\4th year\Fall 2021\ECE
+#        306\Project\KamalapuramSridhar_Akshay\Debug\Obj" --no_cse --no_unroll
+#        --no_inline --no_code_motion --no_tbaa --debug -D__MSP430FR2355__ -e
+#        --double=32 --dlib_config "C:\Program Files (x86)\IAR Systems\Embedded
+#        Workbench 8.5\430\lib\dlib\dl430xlsfn.h" -I ./ --core=430X
+#        --data_model=small -On --multiplier=32 --hw_workaround=CPU40
+#        --code_model=large)
+#    Locale        =  English_USA.1252
+#    List file     =  
+#        D:\Akshay\NCSU\4th year\Fall 2021\ECE
+#        306\Project\KamalapuramSridhar_Akshay\Debug\List\init.lst
+#    Object file   =  
+#        D:\Akshay\NCSU\4th year\Fall 2021\ECE
+#        306\Project\KamalapuramSridhar_Akshay\Debug\Obj\init.r43
+#
+###############################################################################
+
+D:\Akshay\NCSU\4th year\Fall 2021\ECE 306\Project\KamalapuramSridhar_Akshay\init.c
+      1          // ------------------------------------------------------------------------------
+      2          //
+      3          //  Description: This file contains the code to initialize the starting conditions of the program
+      4          // It enables the interrupts, and resets the wheels pins.
+      5          //
+      6          // GLobal Variables: display_line, display, update_display, update_display_count, wheel_on_count, wheels_on
+      7          //
+      8          //  Akshay Kamalapuram Sridhar
+      9          //  Sept 2021
+     10          //  Built with IAR Embedded Workbench Version: V7.21.1
+     11          // ------------------------------------------------------------------------------
+     12          
+     13          #include  "macros.h"
+
+  #define end (8)
+          ^
+"D:\Akshay\NCSU\4th year\Fall 2021\ECE 306\Project\KamalapuramSridhar_Akshay\macros.h",211  Warning[Pe047]: 
+          incompatible redefinition of macro "end" (declared at line 211)
+     14          #include  "msp430.h"
+     15          #include  "functions.h"
+     16          
+     17          // Global Variables
+     18          extern char display_line[NUM_DISPLAY_lINES][NUM_lINES_LAYER];
+     19          extern char *display[NUM_DISPLAY_lINES];
+     20          extern volatile unsigned char update_display;
+     21          extern volatile unsigned int update_display_count;
+     22          extern unsigned int wheel_on_count;
+     23          extern char wheels_on;
+     24          
+     25          void Init_Conditions(void);
+     26          
+     27          // ------------------------------------------------------------------------------
+     28          //
+     29          //  Description: This file contains the code to initialize the starting conditions of the program
+     30          // It enables the interrupts, and resets the wheels pins.
+     31          //
+     32          // GLobal Variables: display_line, display, update_display, update_display_count, wheel_on_count, wheels_on
+     33          //
+     34          //  Akshay Kamalapuram Sridhar
+     35          //  Sept 2021
+     36          //  Built with IAR Embedded Workbench Version: V7.21.1
+     37          //
+     38          // ------------------------------------------------------------------------------
+     39          
+
+   \                                 In  segment CODE, align 2
+     40          void Init_Conditions(void){
+   \                     Init_Conditions:
+   \   000000   0A12         PUSH.W  R10
+     41          //------------------------------------------------------------------------------
+     42          
+     43            int i;
+     44            for(i=DISPLAY_LINE_LAYER_0;i<NUM_lINES_LAYER;i++){
+   \   000002   0A43         MOV.W   #0x0, R10
+   \                     ??Init_Conditions_0:
+   \   000004   3A900B00     CMP.W   #0xb, R10
+   \   000008   0A34         JGE     ??Init_Conditions_1
+     45              display_line[DISPLAY_lINE_0][i] = RESET_STATE;
+   \   00000A   CA43....     MOV.B   #0x0, display_line(R10)
+     46              display_line[DISPLAY_lINE_1][i] = RESET_STATE;
+   \   00000E   CA43....     MOV.B   #0x0, display_line + 11(R10)
+     47              display_line[DISPLAY_lINE_2][i] = RESET_STATE;
+   \   000012   CA43....     MOV.B   #0x0, display_line + 22(R10)
+     48              display_line[DISPLAY_lINE_3][i] = RESET_STATE;
+   \   000016   CA43....     MOV.B   #0x0, display_line + 33(R10)
+     49            }
+   \   00001A   1A53         ADD.W   #0x1, R10
+   \   00001C   F33F         JMP     ??Init_Conditions_0
+     50            display_line[DISPLAY_lINE_0][DISPLAY_LINE_LAYER_10] = RESET_STATE;
+   \                     ??Init_Conditions_1:
+   \   00001E   C243....     MOV.B   #0x0, &display_line + 10
+     51            display_line[DISPLAY_lINE_1][DISPLAY_LINE_LAYER_10] = RESET_STATE;
+   \   000022   C243....     MOV.B   #0x0, &display_line + 21
+     52            display_line[DISPLAY_lINE_2][DISPLAY_LINE_LAYER_10] = RESET_STATE;
+   \   000026   C243....     MOV.B   #0x0, &display_line + 32
+     53            display_line[DISPLAY_lINE_3][DISPLAY_LINE_LAYER_10] = RESET_STATE;
+   \   00002A   C243....     MOV.B   #0x0, &display_line + 43
+     54          
+     55            display[DISPLAY_lINE_0] = &display_line[DISPLAY_lINE_0][RESET_STATE];
+   \   00002E   B240........ MOV.W   #display_line, &display
+     56            display[DISPLAY_lINE_1] = &display_line[DISPLAY_lINE_1][RESET_STATE];
+   \   000034   B240........ MOV.W   #display_line + 11, &display + 2
+     57            display[DISPLAY_lINE_2] = &display_line[DISPLAY_lINE_2][RESET_STATE];
+   \   00003A   B240........ MOV.W   #display_line + 22, &display + 4
+     58            display[DISPLAY_lINE_3] = &display_line[DISPLAY_lINE_3][RESET_STATE];
+   \   000040   B240........ MOV.W   #display_line + 33, &display + 6
+     59            update_display = RESET_STATE;
+   \   000046   C243....     MOV.B   #0x0, &update_display
+     60          
+     61          
+     62          // Interrupts are disabled by default, enable them.
+     63            enable_interrupts();
+   \   00004A   ........     CALLA   #enable_interrupts
+     64          //------------------------------------------------------------------------------
+     65          }
+   \   00004E   3A41         POP.W   R10
+   \   000050   1001         RETA
+
+   Maximum stack usage in bytes:
+
+   CSTACK Function
+   ------ --------
+      6   Init_Conditions
+        6   -> enable_interrupts
+
+
+   Segment part sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      82  Init_Conditions
+
+ 
+ 82 bytes in segment CODE
+ 
+ 82 bytes of CODE memory
+
+Errors: none
+Warnings: 1
