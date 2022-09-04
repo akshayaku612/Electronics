@@ -11,5 +11,6 @@ Below is a list of some of the projects I worked on in various applications of E
 
 ## 2) [Electronics Design](https://github.com/akshayks612/Electronics/tree/digital-circuit-assembly-and-analysis)
 
-* Digital Circuit Analysis - AD2
+* WiFi Controlled DC Motor Car - C, Soldering, Hardware Debugging
 * Test Stand Breakout Board - PCB Design and PCBA
+* Digital Circuit Analysis - AD2
