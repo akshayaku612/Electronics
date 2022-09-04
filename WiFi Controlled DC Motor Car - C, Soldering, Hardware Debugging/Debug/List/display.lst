@@ -1,0 +1,655 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          30/Nov/2021  21:13:10
+# Copyright 1996-2021 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for MSP430, 8K KickStart Edition 7.21
+#
+#    __rt_version  =  3
+#    __double_size =  32
+#    __reg_r4      =  free
+#    __reg_r5      =  free
+#    __pic         =  no
+#    __core        =  430X
+#    __data_model  =  small
+#    __code_model  =  large
+#    Source file   =  
+#        D:\Akshay\NCSU\4th year\Fall 2021\ECE
+#        306\Project\KamalapuramSridhar_Akshay\display.c
+#    Command line  =  
+#        -f C:\Users\aku_1\AppData\Local\Temp\EW54A9.tmp ("D:\Akshay\NCSU\4th
+#        year\Fall 2021\ECE 306\Project\KamalapuramSridhar_Akshay\display.c"
+#        -lC "D:\Akshay\NCSU\4th year\Fall 2021\ECE
+#        306\Project\KamalapuramSridhar_Akshay\Debug\List" -o
+#        "D:\Akshay\NCSU\4th year\Fall 2021\ECE
+#        306\Project\KamalapuramSridhar_Akshay\Debug\Obj" --no_cse --no_unroll
+#        --no_inline --no_code_motion --no_tbaa --debug -D__MSP430FR2355__ -e
+#        --double=32 --dlib_config "C:\Program Files (x86)\IAR Systems\Embedded
+#        Workbench 8.5\430\lib\dlib\dl430xlsfn.h" -I ./ --core=430X
+#        --data_model=small -On --multiplier=32 --hw_workaround=CPU40
+#        --code_model=large)
+#    Locale        =  English_USA.1252
+#    List file     =  
+#        D:\Akshay\NCSU\4th year\Fall 2021\ECE
+#        306\Project\KamalapuramSridhar_Akshay\Debug\List\display.lst
+#    Object file   =  
+#        D:\Akshay\NCSU\4th year\Fall 2021\ECE
+#        306\Project\KamalapuramSridhar_Akshay\Debug\Obj\display.r43
+#
+###############################################################################
+
+D:\Akshay\NCSU\4th year\Fall 2021\ECE 306\Project\KamalapuramSridhar_Akshay\display.c
+      1          // ------------------------------------------------------------------------------
+      2          //
+      3          //  Description: This file contains all the display code used throughout the project
+      4          //
+      5          //  Akshay Kamalapuram Sridhar
+      6          //  Nov 2021
+      7          //  Built with IAR Embedded Workbench Version: V7.21.1
+      8          // ------------------------------------------------------------------------------
+      9          
+     10          #include  "macros.h"
+
+  #define end (8)
+          ^
+"D:\Akshay\NCSU\4th year\Fall 2021\ECE 306\Project\KamalapuramSridhar_Akshay\macros.h",211  Warning[Pe047]: 
+          incompatible redefinition of macro "end" (declared at line 211)
+     11          #include  "msp430.h"
+     12          #include  "functions.h"
+     13          
+     14          extern unsigned int ADC_Left_Detect_flag;
+     15          extern unsigned int ADC_Right_Detect_flag;
+     16          extern volatile unsigned char display_changed;
+     17          extern char display_line[NUM_DISPLAY_lINES][NUM_lINES_LAYER];
+     18          extern volatile unsigned char update_display;
+     19          extern unsigned int left_detector_avg;
+     20          extern unsigned int right_detector_avg;
+     21          extern unsigned int ADC_ThumbWheel_Detect;
+     22          extern unsigned int iot_initialized;
+     23          extern char ip_address[13];
+     24          extern char current_command[10];
+     25          extern unsigned int custom_command_received;
+     26          extern unsigned int display_calibration_flag;
+     27          extern unsigned int prepare_display_flag;
+     28          extern unsigned int assign_black_value;
+     29          extern unsigned int sw1_pressed;
+     30          extern unsigned int circle_timer_flag;
+     31          extern unsigned int Circle_Timer;
+     32          
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     33          char adc_char[ADC_CHAR_SIZE];
+   \                     adc_char:
+   \   000000                DS8 4
+     34          
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     35          char current_time_arr[current_time_arr_size];
+   \                     current_time_arr:
+   \   000000                DS8 4
+
+   \                                 In  segment DATA16_I, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_copy
+     36          char dot[char_length_1]=".";
+   \                     dot:
+   \   000000                DS8 1
+   \   000001                REQUIRE `?<Initializer for dot>`
+     37          
+     38          void displayADC(void);
+     39          void HEXtoBCD(int hex_value,char* arr);
+     40          void displayInitialIOTDetails(void);
+     41          void displayIOTDetails(void);
+     42          void display_all(void);
+     43          
+     44          //Main Display function
+
+   \                                 In  segment CODE, align 2
+     45          void display_all(void){
+   \                     display_all:
+     46            if (ADC_ThumbWheel_Detect>=char_length_2) {
+   \   000000   A293....     CMP.W   #0x2, &ADC_ThumbWheel_Detect
+   \   000004   0328         JNC     ??display_all_1
+     47                displayADC();
+   \   000006   ........     CALLA   #displayADC
+   \   00000A   0B3C         JMP     ??display_all_0
+     48              }
+     49            else if (ADC_ThumbWheel_Detect<=char_length_1) {
+   \                     ??display_all_1:
+   \   00000C   A293....     CMP.W   #0x2, &ADC_ThumbWheel_Detect
+   \   000010   082C         JC      ??display_all_0
+     50              if (sw1_pressed) displayIOTDetails();
+   \   000012   8293....     CMP.W   #0x0, &sw1_pressed
+   \   000016   0324         JEQ     ??display_all_2
+   \   000018   ........     CALLA   #displayIOTDetails
+   \   00001C   023C         JMP     ??display_all_0
+     51              else displayInitialIOTDetails();
+   \                     ??display_all_2:
+   \   00001E   ........     CALLA   #displayInitialIOTDetails
+     52            }
+     53            Display_Process();
+   \                     ??display_all_0:
+   \   000022   ........     CALLA   #Display_Process
+     54          }
+   \   000026   1001         RETA
+     55          
+
+   \                                 In  segment CODE, align 2
+     56          void Display_Process(void){
+   \                     Display_Process:
+     57            if(update_display){
+   \   000000   C293....     CMP.B   #0x0, &update_display
+   \   000004   0D24         JEQ     ??Display_Process_0
+     58              update_display = RESET_STATE;
+   \   000006   C243....     MOV.B   #0x0, &update_display
+     59              if(display_changed){
+   \   00000A   C293....     CMP.B   #0x0, &display_changed
+   \   00000E   0824         JEQ     ??Display_Process_0
+     60                display_changed = RESET_STATE;
+   \   000010   C243....     MOV.B   #0x0, &display_changed
+     61                Display_Update(RESET_STATE,RESET_STATE,RESET_STATE,RESET_STATE);
+   \   000014   4F43         MOV.B   #0x0, R15
+   \   000016   4E43         MOV.B   #0x0, R14
+   \   000018   4D43         MOV.B   #0x0, R13
+   \   00001A   4C43         MOV.B   #0x0, R12
+   \   00001C   ........     CALLA   #Display_Update
+     62              }
+     63            }
+     64          }
+   \                     ??Display_Process_0:
+   \   000020   1001         RETA
+     65          
+     66          //ADC values will be displayed after turning the thumbwheel
+
+   \                                 In  segment CODE, align 2
+     67          void displayADC(void){
+   \                     displayADC:
+     68            if (ADC_Left_Detect_flag){
+   \   000000   8293....     CMP.W   #0x0, &ADC_Left_Detect_flag
+   \   000004   1A24         JEQ     ??displayADC_1
+     69              ADC_Left_Detect_flag=initial_state;
+   \   000006   8243....     MOV.W   #0x0, &ADC_Left_Detect_flag
+     70              HEXtoBCD(left_detector_avg,adc_char); // Convert result to String
+   \   00000A   3D40....     MOV.W   #adc_char, R13
+   \   00000E   1C42....     MOV.W   &left_detector_avg, R12
+   \   000012   ........     CALLA   #HEXtoBCD
+     71              strcpy(display_line[DISPLAY_lINE_0], "LD:       ");
+                     ^
+Warning[Pe223]: function "strcpy" declared implicitly
+   \   000016   3D40....     MOV.W   #`?<Constant "LD:       ">`, R13
+   \   00001A   3C40....     MOV.W   #display_line, R12
+   \   00001E   ........     CALLA   #strcpy
+     72              display_line[DISPLAY_lINE_0][DISPLAY_lINE_CHAR4]=adc_char[char_length_0];
+   \   000022   D242........ MOV.B   &adc_char, &display_line + 4
+     73              display_line[DISPLAY_lINE_0][DISPLAY_lINE_CHAR5]=adc_char[char_length_1];
+   \   000028   D242........ MOV.B   &adc_char + 1, &display_line + 5
+     74              display_line[DISPLAY_lINE_0][DISPLAY_lINE_CHAR6]=adc_char[char_length_2];
+   \   00002E   D242........ MOV.B   &adc_char + 2, &display_line + 6
+     75              display_line[DISPLAY_lINE_0][DISPLAY_lINE_CHAR7]=adc_char[char_length_3];       
+   \   000034   D242........ MOV.B   &adc_char + 3, &display_line + 7
+     76            }  
+     77            
+     78            if (ADC_Right_Detect_flag){
+   \                     ??displayADC_1:
+   \   00003A   8293....     CMP.W   #0x0, &ADC_Right_Detect_flag
+   \   00003E   1A24         JEQ     ??displayADC_2
+     79              ADC_Right_Detect_flag=initial_state;
+   \   000040   8243....     MOV.W   #0x0, &ADC_Right_Detect_flag
+     80              HEXtoBCD(right_detector_avg,adc_char); // Convert result to String
+   \   000044   3D40....     MOV.W   #adc_char, R13
+   \   000048   1C42....     MOV.W   &right_detector_avg, R12
+   \   00004C   ........     CALLA   #HEXtoBCD
+     81              strcpy(display_line[DISPLAY_lINE_1], "RD:       ");
+                     ^
+Warning[Pe223]: function "strcpy" declared implicitly
+   \   000050   3D40....     MOV.W   #`?<Constant "RD:       ">`, R13
+   \   000054   3C40....     MOV.W   #display_line + 11, R12
+   \   000058   ........     CALLA   #strcpy
+     82              display_line[DISPLAY_lINE_1][DISPLAY_lINE_CHAR4]=adc_char[char_length_0];
+   \   00005C   D242........ MOV.B   &adc_char, &display_line + 15
+     83              display_line[DISPLAY_lINE_1][DISPLAY_lINE_CHAR5]=adc_char[char_length_1];
+   \   000062   D242........ MOV.B   &adc_char + 1, &display_line + 16
+     84              display_line[DISPLAY_lINE_1][DISPLAY_lINE_CHAR6]=adc_char[char_length_2];
+   \   000068   D242........ MOV.B   &adc_char + 2, &display_line + 17
+     85              display_line[DISPLAY_lINE_1][DISPLAY_lINE_CHAR7]=adc_char[char_length_3];
+   \   00006E   D242........ MOV.B   &adc_char + 3, &display_line + 18
+     86            }
+     87            
+     88            if (display_calibration_flag && assign_black_value) strcpy(display_line[DISPLAY_lINE_3], "BW Set    ");
+                                                                       ^
+Warning[Pe223]: function "strcpy" declared implicitly
+   \                     ??displayADC_2:
+   \   000074   8293....     CMP.W   #0x0, &display_calibration_flag
+   \   000078   0A24         JEQ     ??displayADC_3
+   \   00007A   8293....     CMP.W   #0x0, &assign_black_value
+   \   00007E   0724         JEQ     ??displayADC_3
+   \   000080   3D40....     MOV.W   #`?<Constant "BW Set    ">`, R13
+   \   000084   3C40....     MOV.W   #display_line + 33, R12
+   \   000088   ........     CALLA   #strcpy
+   \   00008C   103C         JMP     ??displayADC_0
+     89            else if (display_calibration_flag) strcpy(display_line[DISPLAY_lINE_3], "Black Set ");
+                                                      ^
+Warning[Pe223]: function "strcpy" declared implicitly
+   \                     ??displayADC_3:
+   \   00008E   8293....     CMP.W   #0x0, &display_calibration_flag
+   \   000092   0724         JEQ     ??displayADC_4
+   \   000094   3D40....     MOV.W   #`?<Constant "Black Set ">`, R13
+   \   000098   3C40....     MOV.W   #display_line + 33, R12
+   \   00009C   ........     CALLA   #strcpy
+   \   0000A0   063C         JMP     ??displayADC_0
+     90            else {
+     91              strcpy(display_line[DISPLAY_lINE_3], "          ");
+                     ^
+Warning[Pe223]: function "strcpy" declared implicitly
+   \                     ??displayADC_4:
+   \   0000A2   3D40....     MOV.W   #`?<Constant "          ">`, R13
+   \   0000A6   3C40....     MOV.W   #display_line + 33, R12
+   \   0000AA   ........     CALLA   #strcpy
+     92            }
+     93            strcpy(display_line[DISPLAY_lINE_2], "          ");  
+                   ^
+Warning[Pe223]: function "strcpy" declared implicitly
+   \                     ??displayADC_0:
+   \   0000AE   3D40....     MOV.W   #`?<Constant "          ">`, R13
+   \   0000B2   3C40....     MOV.W   #display_line + 22, R12
+   \   0000B6   ........     CALLA   #strcpy
+     94            display_changed = ALWAYS;
+   \   0000BA   D243....     MOV.B   #0x1, &display_changed
+     95          }
+   \   0000BE   1001         RETA
+     96          
+     97          //Initial display upon turning on the car
+
+   \                                 In  segment CODE, align 2
+     98          void displayInitialIOTDetails(void){
+   \                     displayInitialIOTDetails:
+     99            if (!iot_initialized) return;
+   \   000000   8293....     CMP.W   #0x0, &iot_initialized
+   \   000004   6724         JEQ     ??displayInitialIOTDetails_1
+    100            strcpy(display_line[DISPLAY_lINE_0], "   ncsu   ");
+                   ^
+Warning[Pe223]: function "strcpy" declared implicitly
+   \   000006   3D40....     MOV.W   #`?<Constant "   ncsu   ">`, R13
+   \   00000A   3C40....     MOV.W   #display_line, R12
+   \   00000E   ........     CALLA   #strcpy
+    101            strcpy(display_line[DISPLAY_lINE_2], "          ");
+   \   000012   3D40....     MOV.W   #`?<Constant "          ">`, R13
+   \   000016   3C40....     MOV.W   #display_line + 22, R12
+   \   00001A   ........     CALLA   #strcpy
+    102            strcpy(display_line[DISPLAY_lINE_3], "          ");
+   \   00001E   3D40....     MOV.W   #`?<Constant "          ">`, R13
+   \   000022   3C40....     MOV.W   #display_line + 33, R12
+   \   000026   ........     CALLA   #strcpy
+    103            
+    104            if (custom_command_received){
+   \   00002A   8293....     CMP.W   #0x0, &custom_command_received
+   \   00002E   2324         JEQ     ??displayInitialIOTDetails_2
+    105              display_line[DISPLAY_lINE_1][char_0]=current_command[char_0];
+   \   000030   D242........ MOV.B   &current_command, &display_line + 11
+    106              display_line[DISPLAY_lINE_1][char_1]=current_command[char_1];
+   \   000036   D242........ MOV.B   &current_command + 1, &display_line + 12
+    107              display_line[DISPLAY_lINE_1][char_2]=current_command[char_2];
+   \   00003C   D242........ MOV.B   &current_command + 2, &display_line + 13
+    108              display_line[DISPLAY_lINE_1][char_3]=current_command[char_3];
+   \   000042   D242........ MOV.B   &current_command + 3, &display_line + 14
+    109              display_line[DISPLAY_lINE_1][char_4]=current_command[char_4];
+   \   000048   D242........ MOV.B   &current_command + 4, &display_line + 15
+    110              display_line[DISPLAY_lINE_1][char_5]=current_command[char_5];
+   \   00004E   D242........ MOV.B   &current_command + 5, &display_line + 16
+    111              display_line[DISPLAY_lINE_1][char_6]=current_command[char_6];
+   \   000054   D242........ MOV.B   &current_command + 6, &display_line + 17
+    112              display_line[DISPLAY_lINE_1][char_7]=current_command[char_7];
+   \   00005A   D242........ MOV.B   &current_command + 7, &display_line + 18
+    113              display_line[DISPLAY_lINE_1][char_8]=current_command[char_8];
+   \   000060   D242........ MOV.B   &current_command + 8, &display_line + 19
+    114              display_line[DISPLAY_lINE_1][char_9]=current_command[char_9];
+   \   000066   D242........ MOV.B   &current_command + 9, &display_line + 20
+    115              lcd_BIG_mid();
+   \   00006C   ........     CALLA   #lcd_BIG_mid
+    116              display_changed = ALWAYS;
+   \   000070   D243....     MOV.B   #0x1, &display_changed
+    117              return;
+   \   000074   1001         RETA
+    118            }
+    119            
+    120            strcpy(display_line[DISPLAY_lINE_1], "IP Address");
+   \                     ??displayInitialIOTDetails_2:
+   \   000076   3D40....     MOV.W   #`?<Constant "IP Address">`, R13
+   \   00007A   3C40....     MOV.W   #display_line + 11, R12
+   \   00007E   ........     CALLA   #strcpy
+    121            display_line[DISPLAY_lINE_2][char_2]=ip_address[char_0];
+   \   000082   D242........ MOV.B   &ip_address, &display_line + 24
+    122            display_line[DISPLAY_lINE_2][char_3]=ip_address[char_1];
+   \   000088   D242........ MOV.B   &ip_address + 1, &display_line + 25
+    123            display_line[DISPLAY_lINE_2][char_4]=ip_address[char_2];
+   \   00008E   D242........ MOV.B   &ip_address + 2, &display_line + 26
+    124            display_line[DISPLAY_lINE_2][char_5]=ip_address[char_3];
+   \   000094   D242........ MOV.B   &ip_address + 3, &display_line + 27
+    125            display_line[DISPLAY_lINE_2][char_6]=ip_address[char_4];
+   \   00009A   D242........ MOV.B   &ip_address + 4, &display_line + 28
+    126            display_line[DISPLAY_lINE_2][char_7]=ip_address[char_5];
+   \   0000A0   D242........ MOV.B   &ip_address + 5, &display_line + 29
+    127            display_line[DISPLAY_lINE_2][char_8]=ip_address[char_6];
+   \   0000A6   D242........ MOV.B   &ip_address + 6, &display_line + 30
+    128            display_line[DISPLAY_lINE_3][char_2]=ip_address[char_7];
+   \   0000AC   D242........ MOV.B   &ip_address + 7, &display_line + 35
+    129            display_line[DISPLAY_lINE_3][char_3]=ip_address[char_8];
+   \   0000B2   D242........ MOV.B   &ip_address + 8, &display_line + 36
+    130            display_line[DISPLAY_lINE_3][char_4]=ip_address[char_9];
+   \   0000B8   D242........ MOV.B   &ip_address + 9, &display_line + 37
+    131            display_line[DISPLAY_lINE_3][char_5]=ip_address[10];
+   \   0000BE   D242........ MOV.B   &ip_address + 10, &display_line + 38
+    132            display_line[DISPLAY_lINE_3][char_6]=ip_address[11];
+   \   0000C4   D242........ MOV.B   &ip_address + 11, &display_line + 39
+    133            display_line[DISPLAY_lINE_3][char_7]=ip_address[12];
+   \   0000CA   D242........ MOV.B   &ip_address + 12, &display_line + 40
+    134            display_changed = ALWAYS;
+   \   0000D0   D243....     MOV.B   #0x1, &display_changed
+    135          }
+   \                     ??displayInitialIOTDetails_1:
+   \   0000D4   1001         RETA
+    136          
+    137          //Details of IOT that get displayed after pressing SW1
+
+   \                                 In  segment CODE, align 2
+    138          void displayIOTDetails(void){
+   \                     displayIOTDetails:
+    139            strcpy(display_line[DISPLAY_lINE_1], "          ");
+                   ^
+Warning[Pe223]: function "strcpy" declared implicitly
+   \   000000   3D40....     MOV.W   #`?<Constant "          ">`, R13
+   \   000004   3C40....     MOV.W   #display_line + 11, R12
+   \   000008   ........     CALLA   #strcpy
+    140            strcpy(display_line[DISPLAY_lINE_2], "          ");
+   \   00000C   3D40....     MOV.W   #`?<Constant "          ">`, R13
+   \   000010   3C40....     MOV.W   #display_line + 22, R12
+   \   000014   ........     CALLA   #strcpy
+    141            strcpy(display_line[DISPLAY_lINE_3], "          ");
+   \   000018   3D40....     MOV.W   #`?<Constant "          ">`, R13
+   \   00001C   3C40....     MOV.W   #display_line + 33, R12
+   \   000020   ........     CALLA   #strcpy
+    142            if (!circle_timer_flag){
+   \   000024   8293....     CMP.W   #0x0, &circle_timer_flag
+   \   000028   1820         JNE     ??displayIOTDetails_2
+    143              strcpy(display_line[DISPLAY_lINE_0], "Waiting   ");
+   \   00002A   3D40....     MOV.W   #`?<Constant "Waiting   ">`, R13
+   \   00002E   3C40....     MOV.W   #display_line, R12
+   \   000032   ........     CALLA   #strcpy
+    144              strcpy(display_line[DISPLAY_lINE_1], "          ");
+   \   000036   3D40....     MOV.W   #`?<Constant "          ">`, R13
+   \   00003A   3C40....     MOV.W   #display_line + 11, R12
+   \   00003E   ........     CALLA   #strcpy
+    145              strcpy(display_line[DISPLAY_lINE_2], "          ");
+   \   000042   3D40....     MOV.W   #`?<Constant "          ">`, R13
+   \   000046   3C40....     MOV.W   #display_line + 22, R12
+   \   00004A   ........     CALLA   #strcpy
+    146              strcpy(display_line[DISPLAY_lINE_3], "For Input ");
+   \   00004E   3D40....     MOV.W   #`?<Constant "For Input ">`, R13
+   \   000052   3C40....     MOV.W   #display_line + 33, R12
+   \   000056   ........     CALLA   #strcpy
+    147            }
+    148            
+    149            if (circle_timer_flag){
+   \                     ??displayIOTDetails_2:
+   \   00005A   8293....     CMP.W   #0x0, &circle_timer_flag
+   \   00005E   1224         JEQ     ??displayIOTDetails_3
+    150              HEXtoBCD(Circle_Timer,current_time_arr);
+   \   000060   3D40....     MOV.W   #current_time_arr, R13
+   \   000064   1C42....     MOV.W   &Circle_Timer, R12
+   \   000068   ........     CALLA   #HEXtoBCD
+    151              display_line[DISPLAY_lINE_2][char_6]=current_time_arr[char_length_0];
+   \   00006C   D242........ MOV.B   &current_time_arr, &display_line + 28
+    152              display_line[DISPLAY_lINE_2][char_7]=current_time_arr[char_length_1];
+   \   000072   D242........ MOV.B   &current_time_arr + 1, &display_line + 29
+    153              display_line[DISPLAY_lINE_2][char_8]=current_time_arr[char_length_2];
+   \   000078   D242........ MOV.B   &current_time_arr + 2, &display_line + 30
+    154              display_line[DISPLAY_lINE_2][char_9]=current_time_arr[char_length_3];
+   \   00007E   D242........ MOV.B   &current_time_arr + 3, &display_line + 31
+    155              //display_line[DISPLAY_lINE_2][4]=current_time_arr[char_length_3];
+    156            }
+    157            
+    158            if (!iot_initialized) return;
+   \                     ??displayIOTDetails_3:
+   \   000084   8293....     CMP.W   #0x0, &iot_initialized
+   \   000088   4A24         JEQ     ??displayIOTDetails_1
+    159            display_line[DISPLAY_lINE_1][char_0]=ip_address[char_0];
+   \   00008A   D242........ MOV.B   &ip_address, &display_line + 11
+    160            display_line[DISPLAY_lINE_1][char_1]=ip_address[char_1];
+   \   000090   D242........ MOV.B   &ip_address + 1, &display_line + 12
+    161            display_line[DISPLAY_lINE_1][char_2]=ip_address[char_2];
+   \   000096   D242........ MOV.B   &ip_address + 2, &display_line + 13
+    162            display_line[DISPLAY_lINE_1][char_3]=ip_address[char_3];
+   \   00009C   D242........ MOV.B   &ip_address + 3, &display_line + 14
+    163            display_line[DISPLAY_lINE_1][char_4]=ip_address[char_4];
+   \   0000A2   D242........ MOV.B   &ip_address + 4, &display_line + 15
+    164            display_line[DISPLAY_lINE_1][char_5]=ip_address[char_5];
+   \   0000A8   D242........ MOV.B   &ip_address + 5, &display_line + 16
+    165            display_line[DISPLAY_lINE_1][char_6]=ip_address[char_6];
+   \   0000AE   D242........ MOV.B   &ip_address + 6, &display_line + 17
+    166            display_line[DISPLAY_lINE_1][char_7]=ip_address[char_7];
+   \   0000B4   D242........ MOV.B   &ip_address + 7, &display_line + 18
+    167            display_line[DISPLAY_lINE_1][char_8]=ip_address[char_8];
+   \   0000BA   D242........ MOV.B   &ip_address + 8, &display_line + 19
+    168            display_line[DISPLAY_lINE_1][char_9]=ip_address[char_9];
+   \   0000C0   D242........ MOV.B   &ip_address + 9, &display_line + 20
+    169            display_line[DISPLAY_lINE_2][char_0]=ip_address[char_10];
+   \   0000C6   D242........ MOV.B   &ip_address + 10, &display_line + 22
+    170            display_line[DISPLAY_lINE_2][char_1]=ip_address[char_11];
+   \   0000CC   D242........ MOV.B   &ip_address + 11, &display_line + 23
+    171            display_line[DISPLAY_lINE_2][char_2]=ip_address[char_12];
+   \   0000D2   D242........ MOV.B   &ip_address + 12, &display_line + 24
+    172            
+    173            if (custom_command_received){
+   \   0000D8   8293....     CMP.W   #0x0, &custom_command_received
+   \   0000DC   1E24         JEQ     ??displayIOTDetails_4
+    174              display_line[DISPLAY_lINE_3][char_0]=current_command[char_0];
+   \   0000DE   D242........ MOV.B   &current_command, &display_line + 33
+    175              display_line[DISPLAY_lINE_3][char_1]=current_command[char_1];
+   \   0000E4   D242........ MOV.B   &current_command + 1, &display_line + 34
+    176              display_line[DISPLAY_lINE_3][char_2]=current_command[char_2];
+   \   0000EA   D242........ MOV.B   &current_command + 2, &display_line + 35
+    177              display_line[DISPLAY_lINE_3][char_3]=current_command[char_3];
+   \   0000F0   D242........ MOV.B   &current_command + 3, &display_line + 36
+    178              display_line[DISPLAY_lINE_3][char_4]=current_command[char_4];
+   \   0000F6   D242........ MOV.B   &current_command + 4, &display_line + 37
+    179              display_line[DISPLAY_lINE_3][char_5]=current_command[char_5];
+   \   0000FC   D242........ MOV.B   &current_command + 5, &display_line + 38
+    180              display_line[DISPLAY_lINE_3][char_6]=current_command[char_6];
+   \   000102   D242........ MOV.B   &current_command + 6, &display_line + 39
+    181              display_line[DISPLAY_lINE_3][char_7]=current_command[char_7];
+   \   000108   D242........ MOV.B   &current_command + 7, &display_line + 40
+    182              display_line[DISPLAY_lINE_3][char_8]=current_command[char_8];
+   \   00010E   D242........ MOV.B   &current_command + 8, &display_line + 41
+    183              display_line[DISPLAY_lINE_3][char_9]=current_command[char_9];
+   \   000114   D242........ MOV.B   &current_command + 9, &display_line + 42
+    184            }
+    185            
+    186            display_changed = ALWAYS;
+   \                     ??displayIOTDetails_4:
+   \   00011A   D243....     MOV.B   #0x1, &display_changed
+    187          }
+   \                     ??displayIOTDetails_1:
+   \   00011E   1001         RETA
+    188          
+    189          //Converting ADC Hex values to BCD
+
+   \                                 In  segment CODE, align 2
+    190          void HEXtoBCD(int hex_value,char* arr){
+   \                     HEXtoBCD:
+    191            int value=RESET_STATE;
+   \   000000   0F43         MOV.W   #0x0, R15
+    192            arr[char_length_0] = ascii_0;
+   \   000002   FD4030000000 MOV.B   #0x30, 0(R13)
+    193            while (hex_value > three_digit_limit){
+   \                     ??HEXtoBCD_0:
+   \   000008   3C90E803     CMP.W   #0x3e8, R12
+   \   00000C   0438         JL      ??HEXtoBCD_3
+    194              hex_value = hex_value - thousandth_digit;
+   \   00000E   3C5018FC     ADD.W   #0xfc18, R12
+    195              value = value + single_increment;
+   \   000012   1F53         ADD.W   #0x1, R15
+   \   000014   F93F         JMP     ??HEXtoBCD_0
+    196            }
+    197            arr[char_length_0] = hex_ascii_0 + value;
+   \                     ??HEXtoBCD_3:
+   \   000016   0E12         PUSH.W  R14
+   \   000018   C14F0000     MOV.B   R15, 0(SP)
+   \   00001C   3E41         POP.W   R14
+   \   00001E   7E503000     ADD.B   #0x30, R14
+   \   000022   CD4E0000     MOV.B   R14, 0(R13)
+    198            value = RESET_STATE;
+   \   000026   0F43         MOV.W   #0x0, R15
+    199            while (hex_value > two_digit_limit){
+   \                     ??HEXtoBCD_1:
+   \   000028   3C906400     CMP.W   #0x64, R12
+   \   00002C   0438         JL      ??HEXtoBCD_4
+    200              hex_value = hex_value - hundredth_limit;
+   \   00002E   3C509CFF     ADD.W   #0xff9c, R12
+    201              value = value + single_increment;
+   \   000032   1F53         ADD.W   #0x1, R15
+   \   000034   F93F         JMP     ??HEXtoBCD_1
+    202            }
+    203            arr[char_length_1] = hex_ascii_0 + value;
+   \                     ??HEXtoBCD_4:
+   \   000036   0E12         PUSH.W  R14
+   \   000038   C14F0000     MOV.B   R15, 0(SP)
+   \   00003C   3E41         POP.W   R14
+   \   00003E   7E503000     ADD.B   #0x30, R14
+   \   000042   CD4E0100     MOV.B   R14, 0x1(R13)
+    204            value = RESET_STATE;
+   \   000046   0F43         MOV.W   #0x0, R15
+    205            while (hex_value > one_digit_limit){
+   \                     ??HEXtoBCD_2:
+   \   000048   3C900A00     CMP.W   #0xa, R12
+   \   00004C   0438         JL      ??HEXtoBCD_5
+    206              hex_value = hex_value - tenth_limit;
+   \   00004E   3C50F6FF     ADD.W   #0xfff6, R12
+    207              value = value + single_increment;   
+   \   000052   1F53         ADD.W   #0x1, R15
+   \   000054   F93F         JMP     ??HEXtoBCD_2
+    208            }
+    209            arr[char_length_2] = hex_ascii_0 + value;
+   \                     ??HEXtoBCD_5:
+   \   000056   0E12         PUSH.W  R14
+   \   000058   C14F0000     MOV.B   R15, 0(SP)
+   \   00005C   3E41         POP.W   R14
+   \   00005E   7E503000     ADD.B   #0x30, R14
+   \   000062   CD4E0200     MOV.B   R14, 0x2(R13)
+    210            arr[char_length_3] = hex_ascii_0 + hex_value;
+   \   000066   0E12         PUSH.W  R14
+   \   000068   C14C0000     MOV.B   R12, 0(SP)
+   \   00006C   3E41         POP.W   R14
+   \   00006E   7E503000     ADD.B   #0x30, R14
+   \   000072   CD4E0300     MOV.B   R14, 0x3(R13)
+    211          }
+   \   000076   1001         RETA
+
+   \                                 In  segment DATA16_ID, align 1, align-sorted
+   \                     `?<Initializer for dot>`:
+   \   000000   2E           DC8 2EH
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "LD:       ">`:
+   \   000000   4C443A202020 DC8 "LD:       "
+   \            2020202000  
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "RD:       ">`:
+   \   000000   52443A202020 DC8 "RD:       "
+   \            2020202000  
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "BW Set    ">`:
+   \   000000   425720536574 DC8 "BW Set    "
+   \            2020202000  
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "Black Set ">`:
+   \   000000   426C61636B20 DC8 "Black Set "
+   \            5365742000  
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "          ">`:
+   \   000000   202020202020 DC8 "          "
+   \            2020202000  
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "   ncsu   ">`:
+   \   000000   2020206E6373 DC8 "   ncsu   "
+   \            7520202000  
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "IP Address">`:
+   \   000000   495020416464 DC8 "IP Address"
+   \            7265737300  
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "Waiting   ">`:
+   \   000000   57616974696E DC8 "Waiting   "
+   \            6720202000  
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "For Input ">`:
+   \   000000   466F7220496E DC8 "For Input "
+   \            7075742000  
+
+   Maximum stack usage in bytes:
+
+   CSTACK Function
+   ------ --------
+      4   Display_Process
+        4   -> Display_Update
+      6   HEXtoBCD
+      4   displayADC
+        4   -> HEXtoBCD
+        4   -> strcpy
+      4   displayIOTDetails
+        4   -> HEXtoBCD
+        4   -> strcpy
+      4   displayInitialIOTDetails
+        4   -> lcd_BIG_mid
+        4   -> strcpy
+      4   display_all
+        4   -> Display_Process
+        4   -> displayADC
+        4   -> displayIOTDetails
+        4   -> displayInitialIOTDetails
+
+
+   Segment part sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      11  ?<Constant "          ">
+      11  ?<Constant "   ncsu   ">
+      11  ?<Constant "BW Set    ">
+      11  ?<Constant "Black Set ">
+      11  ?<Constant "For Input ">
+      11  ?<Constant "IP Address">
+      11  ?<Constant "LD:       ">
+      11  ?<Constant "RD:       ">
+      11  ?<Constant "Waiting   ">
+       1  ?<Initializer for dot>
+      34  Display_Process
+     120  HEXtoBCD
+       4  adc_char
+       4  current_time_arr
+     192  displayADC
+     288  displayIOTDetails
+     214  displayInitialIOTDetails
+      40  display_all
+       1  dot
+
+ 
+ 888 bytes in segment CODE
+  99 bytes in segment DATA16_C
+   1 byte  in segment DATA16_I
+   1 byte  in segment DATA16_ID
+   8 bytes in segment DATA16_Z
+ 
+ 888 bytes of CODE  memory
+ 100 bytes of CONST memory
+   9 bytes of DATA  memory
+
+Errors: none
+Warnings: 9

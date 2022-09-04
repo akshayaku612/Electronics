@@ -1,0 +1,1105 @@
+###############################################################################
+#
+# IAR C/C++ Compiler V7.21.1.1000/W32 for MSP430          30/Nov/2021  21:13:10
+# Copyright 1996-2021 IAR Systems AB.
+# PC-locked license - IAR Embedded Workbench for MSP430, 8K KickStart Edition 7.21
+#
+#    __rt_version  =  3
+#    __double_size =  32
+#    __reg_r4      =  free
+#    __reg_r5      =  free
+#    __pic         =  no
+#    __core        =  430X
+#    __data_model  =  small
+#    __code_model  =  large
+#    Source file   =  
+#        D:\Akshay\NCSU\4th year\Fall 2021\ECE
+#        306\Project\KamalapuramSridhar_Akshay\iot_commands.c
+#    Command line  =  
+#        -f C:\Users\aku_1\AppData\Local\Temp\EW54F9.tmp ("D:\Akshay\NCSU\4th
+#        year\Fall 2021\ECE
+#        306\Project\KamalapuramSridhar_Akshay\iot_commands.c" -lC
+#        "D:\Akshay\NCSU\4th year\Fall 2021\ECE
+#        306\Project\KamalapuramSridhar_Akshay\Debug\List" -o
+#        "D:\Akshay\NCSU\4th year\Fall 2021\ECE
+#        306\Project\KamalapuramSridhar_Akshay\Debug\Obj" --no_cse --no_unroll
+#        --no_inline --no_code_motion --no_tbaa --debug -D__MSP430FR2355__ -e
+#        --double=32 --dlib_config "C:\Program Files (x86)\IAR Systems\Embedded
+#        Workbench 8.5\430\lib\dlib\dl430xlsfn.h" -I ./ --core=430X
+#        --data_model=small -On --multiplier=32 --hw_workaround=CPU40
+#        --code_model=large)
+#    Locale        =  English_USA.1252
+#    List file     =  
+#        D:\Akshay\NCSU\4th year\Fall 2021\ECE
+#        306\Project\KamalapuramSridhar_Akshay\Debug\List\iot_commands.lst
+#    Object file   =  
+#        D:\Akshay\NCSU\4th year\Fall 2021\ECE
+#        306\Project\KamalapuramSridhar_Akshay\Debug\Obj\iot_commands.r43
+#
+###############################################################################
+
+D:\Akshay\NCSU\4th year\Fall 2021\ECE 306\Project\KamalapuramSridhar_Akshay\iot_commands.c
+      1          // ------------------------------------------------------------------------------
+      2          //
+      3          //  Description: This file contains the code for all the commands that need to be sent to iot for initialization and also contains the code to tell the iot how it needs to respond to commands
+      4          //
+      5          //
+      6          //  Akshay Kamalapuram Sridhar
+      7          //  Nov 2021
+      8          //  Built with IAR Embedded Workbench Version: V7.21.1
+      9          // ------------------------------------------------------------------------------
+     10          
+     11          #include  "macros.h"
+
+  #define end (8)
+          ^
+"D:\Akshay\NCSU\4th year\Fall 2021\ECE 306\Project\KamalapuramSridhar_Akshay\macros.h",211  Warning[Pe047]: 
+          incompatible redefinition of macro "end" (declared at line 211)
+     12          #include  "msp430.h"
+
+   \                                 In  segment DATA16_AN, at 0x51a
+   \   union <unnamed> _A_UCA0IE_L
+   \                     _A_UCA0IE_L:
+   \   000000                DS8 2
+     13          #include  "functions.h"
+     14          #include <string.h>
+     15          
+     16          //global variables
+     17          extern unsigned int Time_Sequence;
+     18          extern unsigned int timer_flag;
+     19          extern unsigned int Movement_Timer;
+     20          extern char process_buffer1[process_buffer_size];
+     21          extern char process_buffer0[process_buffer_size]; 
+     22          extern unsigned int iot_ready;
+     23          extern unsigned int receive_flag;
+     24          extern unsigned int response_buffer_current_buffer_size;
+     25          extern unsigned int circle_timer_flag;
+     26          extern volatile unsigned char display_changed;
+     27          extern char display_line[NUM_DISPLAY_lINES][NUM_lINES_LAYER];
+     28          extern unsigned int Circle_Timer;
+     29          
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     30          unsigned int command=initial_state;
+   \                     command:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     31          unsigned int high_flag=initial_state;
+   \                     high_flag:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     32          unsigned int i=initial_state;
+   \                     i:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     33          unsigned previous_state=initial_state;
+   \                     previous_state:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     34          unsigned int iot_initialized=initial_state;
+   \                     iot_initialized:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     35          unsigned int exit_flag=initial_state;
+   \                     exit_flag:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     36          unsigned int custom_command_received=initial_state;
+   \                     custom_command_received:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     37          unsigned int command_received_internal=initial_state;
+   \                     command_received_internal:
+   \   000000                DS8 2
+     38          
+     39          //IOT Initialization Commands
+
+   \                                 In  segment DATA16_I, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_copy
+     40          char campus_profile_command[]="\rAT&W0\r";
+   \                     campus_profile_command:
+   \   000000                DS8 8
+   \   000008                REQUIRE `?<Initializer for campus_profile_command>`
+
+   \                                 In  segment DATA16_I, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_copy
+     41          char reset_command[]="\rAT+RESET=1\r";
+   \                     reset_command:
+   \   000000                DS8 13
+   \   00000D                REQUIRE `?<Initializer for reset_command>`
+
+   \                                 In  segment DATA16_I, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_copy
+     42          char tcp_server_command[]="\rAT+NSTCP=1210,1\r";
+   \                     tcp_server_command:
+   \   000000                DS8 18
+   \   000012                REQUIRE `?<Initializer for tcp_server_command>`
+     43          
+     44          //IOT Response variables
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     45          char campus_profile_response[campus_profile_response_size];
+   \                     campus_profile_response:
+   \   000000                DS8 50
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     46          char reset_response[reset_response_size];
+   \                     reset_response:
+   \   000000                DS8 150
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     47          char tcp_server_response[tcp_server_response_size];
+   \                     tcp_server_response:
+   \   000000                DS8 150
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     48          char tcp_client_connect_response[tcp_client_connect_response_size];
+   \                     tcp_client_connect_response:
+   \   000000                DS8 50
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     49          char custom_command_response[custom_command_response_size];
+   \                     custom_command_response:
+   \   000000                DS8 35
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     50          int command_check_flag=initial_state;
+   \                     command_check_flag:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_I, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_copy
+     51          char* response_buffer[]={campus_profile_response, reset_response, tcp_server_response, tcp_client_connect_response, custom_command_response};
+   \                     response_buffer:
+   \   000000                DS8 10
+   \   00000A                REQUIRE `?<Initializer for response_buffer>`
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     52          unsigned int iot_buffer_command_type_index=initial_state;
+   \                     iot_buffer_command_type_index:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 2, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     53          unsigned int iot_buffer_response_index=initial_state;
+   \                     iot_buffer_response_index:
+   \   000000                DS8 2
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     54          char ip_address[ip_address_size];
+   \                     ip_address:
+   \   000000                DS8 13
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     55          char direction,duration;
+   \                     direction:
+   \   000000                DS8 1
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+   \                     duration:
+   \   000000                DS8 1
+
+   \                                 In  segment DATA16_Z, align 1, align-sorted
+   \   000000                REQUIRE ?cstart_init_zero
+     56          char current_command[current_command_size];
+   \                     current_command:
+   \   000000                DS8 10
+     57          
+     58          void response_handler(void);
+     59          void Iot_cycle(void);
+     60          
+     61          //response handler function that handles all possible responses from iot
+
+   \                                 In  segment CODE, align 2
+     62          void response_handler(void){
+   \                     response_handler:
+   \   000000   0A12         PUSH.W  R10
+     63            switch (iot_buffer_command_type_index){
+   \   000002   1F42....     MOV.W   &iot_buffer_command_type_index, R15
+   \   000006   0F83         SUB.W   #0x0, R15
+   \   000008   0924         JEQ     ??response_handler_13
+   \   00000A   1F83         SUB.W   #0x1, R15
+   \   00000C   1E24         JEQ     ??response_handler_14
+   \   00000E   1F83         SUB.W   #0x1, R15
+   \   000010   8824         JEQ     ??response_handler_15
+   \   000012   1F83         SUB.W   #0x1, R15
+   \   000014   A424         JEQ     ??response_handler_16
+   \   000016   1F83         SUB.W   #0x1, R15
+   \   000018   BE24         JEQ     ??response_handler_17
+   \   00001A   C03D         JMP     ??response_handler_11
+     64              case campus_profile: //campus profile response handler
+     65                for (int j=initial_state; j<tcp_client_connect_response_size;j++){
+   \                     ??response_handler_13:
+   \   00001C   0F43         MOV.W   #0x0, R15
+   \                     ??response_handler_0:
+   \   00001E   3F903200     CMP.W   #0x32, R15
+   \   000022   BE35         JGE     ??response_handler_6
+     66                  if (response_buffer[campus_profile][j]==O && response_buffer[campus_profile][j+char_1]==K) {
+   \   000024   1E42....     MOV.W   &response_buffer, R14
+   \   000028   0E5F         ADD.W   R15, R14
+   \   00002A   FE904F000000 CMP.B   #0x4f, 0(R14)
+   \   000030   0A20         JNE     ??response_handler_18
+   \   000032   1E42....     MOV.W   &response_buffer, R14
+   \   000036   0E5F         ADD.W   R15, R14
+   \   000038   FE904B000100 CMP.B   #0x4b, 0x1(R14)
+   \   00003E   0320         JNE     ??response_handler_18
+     67                    command_check_flag=ALWAYS;
+   \   000040   9243....     MOV.W   #0x1, &command_check_flag
+     68                    break;
+   \   000044   AD3D         JMP     ??response_handler_6
+     69                  }
+     70                }  
+   \                     ??response_handler_18:
+   \   000046   1F53         ADD.W   #0x1, R15
+   \   000048   EA3F         JMP     ??response_handler_0
+     71                break;
+     72              case reset_profile:  //reset profile command response handler
+     73                for (int j=initial_state; j<tcp_server_response_size;j++){
+   \                     ??response_handler_14:
+   \   00004A   0F43         MOV.W   #0x0, R15
+   \                     ??response_handler_1:
+   \   00004C   3F909600     CMP.W   #0x96, R15
+   \   000050   A735         JGE     ??response_handler_6
+     74                  if (response_buffer[reset_profile][j]==S && response_buffer[reset_profile][j+char_1]==U && response_buffer[reset_profile][j+char_2]==C) {
+   \   000052   1E42....     MOV.W   &response_buffer + 2, R14
+   \   000056   0E5F         ADD.W   R15, R14
+   \   000058   FE9053000000 CMP.B   #0x53, 0(R14)
+   \   00005E   5F20         JNE     ??response_handler_19
+   \   000060   1E42....     MOV.W   &response_buffer + 2, R14
+   \   000064   0E5F         ADD.W   R15, R14
+   \   000066   FE9055000100 CMP.B   #0x55, 0x1(R14)
+   \   00006C   5820         JNE     ??response_handler_19
+   \   00006E   1E42....     MOV.W   &response_buffer + 2, R14
+   \   000072   0E5F         ADD.W   R15, R14
+   \   000074   DE930200     CMP.B   #0x1, 0x2(R14)
+   \   000078   5220         JNE     ??response_handler_19
+     75                    command_check_flag=ALWAYS;
+   \   00007A   9243....     MOV.W   #0x1, &command_check_flag
+     76                    int index=j-campus_profile_response_size;
+   \   00007E   3F50CEFF     ADD.W   #0xffce, R15
+     77                    ip_address[char_0]=response_buffer[reset_profile][index++];
+   \   000082   1E42....     MOV.W   &response_buffer + 2, R14
+   \   000086   0E5F         ADD.W   R15, R14
+   \   000088   E24E....     MOV.B   @R14, &ip_address
+   \   00008C   1F53         ADD.W   #0x1, R15
+     78                    ip_address[char_1]=response_buffer[reset_profile][index++];
+   \   00008E   1E42....     MOV.W   &response_buffer + 2, R14
+   \   000092   0E5F         ADD.W   R15, R14
+   \   000094   E24E....     MOV.B   @R14, &ip_address + 1
+   \   000098   1F53         ADD.W   #0x1, R15
+     79                    ip_address[char_2]=response_buffer[reset_profile][index++];
+   \   00009A   1E42....     MOV.W   &response_buffer + 2, R14
+   \   00009E   0E5F         ADD.W   R15, R14
+   \   0000A0   E24E....     MOV.B   @R14, &ip_address + 2
+   \   0000A4   1F53         ADD.W   #0x1, R15
+     80                    ip_address[char_3]=response_buffer[reset_profile][index++];
+   \   0000A6   1E42....     MOV.W   &response_buffer + 2, R14
+   \   0000AA   0E5F         ADD.W   R15, R14
+   \   0000AC   E24E....     MOV.B   @R14, &ip_address + 3
+   \   0000B0   1F53         ADD.W   #0x1, R15
+     81                    ip_address[char_4]=response_buffer[reset_profile][index++];
+   \   0000B2   1E42....     MOV.W   &response_buffer + 2, R14
+   \   0000B6   0E5F         ADD.W   R15, R14
+   \   0000B8   E24E....     MOV.B   @R14, &ip_address + 4
+   \   0000BC   1F53         ADD.W   #0x1, R15
+     82                    ip_address[char_5]=response_buffer[reset_profile][index++];
+   \   0000BE   1E42....     MOV.W   &response_buffer + 2, R14
+   \   0000C2   0E5F         ADD.W   R15, R14
+   \   0000C4   E24E....     MOV.B   @R14, &ip_address + 5
+   \   0000C8   1F53         ADD.W   #0x1, R15
+     83                    ip_address[char_6]=response_buffer[reset_profile][index++];
+   \   0000CA   1E42....     MOV.W   &response_buffer + 2, R14
+   \   0000CE   0E5F         ADD.W   R15, R14
+   \   0000D0   E24E....     MOV.B   @R14, &ip_address + 6
+   \   0000D4   1F53         ADD.W   #0x1, R15
+     84                    ip_address[char_7]=response_buffer[reset_profile][index++];
+   \   0000D6   1E42....     MOV.W   &response_buffer + 2, R14
+   \   0000DA   0E5F         ADD.W   R15, R14
+   \   0000DC   E24E....     MOV.B   @R14, &ip_address + 7
+   \   0000E0   1F53         ADD.W   #0x1, R15
+     85                    ip_address[char_8]=response_buffer[reset_profile][index++];
+   \   0000E2   1E42....     MOV.W   &response_buffer + 2, R14
+   \   0000E6   0E5F         ADD.W   R15, R14
+   \   0000E8   E24E....     MOV.B   @R14, &ip_address + 8
+   \   0000EC   1F53         ADD.W   #0x1, R15
+     86                    ip_address[char_9]=response_buffer[reset_profile][index++];
+   \   0000EE   1E42....     MOV.W   &response_buffer + 2, R14
+   \   0000F2   0E5F         ADD.W   R15, R14
+   \   0000F4   E24E....     MOV.B   @R14, &ip_address + 9
+   \   0000F8   1F53         ADD.W   #0x1, R15
+     87                    ip_address[char_10]=response_buffer[reset_profile][index++];
+   \   0000FA   1E42....     MOV.W   &response_buffer + 2, R14
+   \   0000FE   0E5F         ADD.W   R15, R14
+   \   000100   E24E....     MOV.B   @R14, &ip_address + 10
+   \   000104   1F53         ADD.W   #0x1, R15
+     88                    ip_address[char_11]=response_buffer[reset_profile][index++];
+   \   000106   1E42....     MOV.W   &response_buffer + 2, R14
+   \   00010A   0E5F         ADD.W   R15, R14
+   \   00010C   E24E....     MOV.B   @R14, &ip_address + 11
+   \   000110   1F53         ADD.W   #0x1, R15
+     89                    ip_address[char_12]=response_buffer[reset_profile][index];
+   \   000112   1E42....     MOV.W   &response_buffer + 2, R14
+   \   000116   0E5F         ADD.W   R15, R14
+   \   000118   E24E....     MOV.B   @R14, &ip_address + 12
+     90                    break;
+   \   00011C   413D         JMP     ??response_handler_6
+     91                  }
+     92                }
+   \                     ??response_handler_19:
+   \   00011E   1F53         ADD.W   #0x1, R15
+   \   000120   953F         JMP     ??response_handler_1
+     93                break;
+     94              case tcp_server: //tcp_server connection response handler
+     95                for (int j=initial_state; j<tcp_server_response_size;j++){
+   \                     ??response_handler_15:
+   \   000122   0F43         MOV.W   #0x0, R15
+   \                     ??response_handler_2:
+   \   000124   3F909600     CMP.W   #0x96, R15
+   \   000128   3B35         JGE     ??response_handler_6
+     96                  if (response_buffer[tcp_server][j]==C && response_buffer[tcp_server][j+char_1]==O && response_buffer[tcp_server][j+char_2]==N) {
+   \   00012A   1E42....     MOV.W   &response_buffer + 4, R14
+   \   00012E   0E5F         ADD.W   R15, R14
+   \   000130   DE930000     CMP.B   #0x1, 0(R14)
+   \   000134   1220         JNE     ??response_handler_20
+   \   000136   1E42....     MOV.W   &response_buffer + 4, R14
+   \   00013A   0E5F         ADD.W   R15, R14
+   \   00013C   FE904F000100 CMP.B   #0x4f, 0x1(R14)
+   \   000142   0B20         JNE     ??response_handler_20
+   \   000144   1E42....     MOV.W   &response_buffer + 4, R14
+   \   000148   0E5F         ADD.W   R15, R14
+   \   00014A   EE920200     CMP.B   #0x4, 0x2(R14)
+   \   00014E   0520         JNE     ??response_handler_20
+     97                    command_check_flag=ALWAYS;
+   \   000150   9243....     MOV.W   #0x1, &command_check_flag
+     98                    iot_initialized=ALWAYS;
+   \   000154   9243....     MOV.W   #0x1, &iot_initialized
+     99                    break;
+   \   000158   233D         JMP     ??response_handler_6
+    100                  }
+    101                }  
+   \                     ??response_handler_20:
+   \   00015A   1F53         ADD.W   #0x1, R15
+   \   00015C   E33F         JMP     ??response_handler_2
+    102                break;
+    103              case tcp_client: //tcp client connection response handler
+    104                for (int j=RESET_STATE; j<campus_profile_response_size;j++){
+   \                     ??response_handler_16:
+   \   00015E   0F43         MOV.W   #0x0, R15
+   \                     ??response_handler_3:
+   \   000160   3F903200     CMP.W   #0x32, R15
+   \   000164   1D35         JGE     ??response_handler_6
+    105                  if (response_buffer[tcp_client][j]==C && response_buffer[tcp_client][j+1]==O && response_buffer[tcp_client][j+2]==N) {
+   \   000166   1E42....     MOV.W   &response_buffer + 6, R14
+   \   00016A   0E5F         ADD.W   R15, R14
+   \   00016C   DE930000     CMP.B   #0x1, 0(R14)
+   \   000170   1020         JNE     ??response_handler_21
+   \   000172   1E42....     MOV.W   &response_buffer + 6, R14
+   \   000176   0E5F         ADD.W   R15, R14
+   \   000178   FE904F000100 CMP.B   #0x4f, 0x1(R14)
+   \   00017E   0920         JNE     ??response_handler_21
+   \   000180   1E42....     MOV.W   &response_buffer + 6, R14
+   \   000184   0E5F         ADD.W   R15, R14
+   \   000186   EE920200     CMP.B   #0x4, 0x2(R14)
+   \   00018A   0320         JNE     ??response_handler_21
+    106                    command_check_flag=ALWAYS;
+   \   00018C   9243....     MOV.W   #0x1, &command_check_flag
+    107                    break;
+   \   000190   073D         JMP     ??response_handler_6
+    108                  }
+    109                } 
+   \                     ??response_handler_21:
+   \   000192   1F53         ADD.W   #0x1, R15
+   \   000194   E53F         JMP     ??response_handler_3
+    110                break;
+    111              case custom_command: //custom commands handler
+    112                for (int j=RESET_STATE; j<custom_command_response_size;j++){
+   \                     ??response_handler_17:
+   \   000196   0A43         MOV.W   #0x0, R10
+   \                     ??response_handler_4:
+   \   000198   3A902300     CMP.W   #0x23, R10
+   \   00019C   0135         JGE     ??response_handler_6
+    113                  if (response_buffer[custom_command][j]==R && response_buffer[custom_command][j+char_1]==num_1 && response_buffer[custom_command][j+char_2]==num_2 && response_buffer[custom_command][j+char_3]==num_1 && response_buffer[custom_command][j+char_4]==num_0 && response_buffer[custom_command][j+char_9]==CR) { //verifies command is a valid authorized command by verifying the pin
+   \   00019E   1F42....     MOV.W   &response_buffer + 8, R15
+   \   0001A2   0F5A         ADD.W   R10, R15
+   \   0001A4   FF9052000000 CMP.B   #0x52, 0(R15)
+   \   0001AA   F620         JNE     ??response_handler_22
+   \   0001AC   1F42....     MOV.W   &response_buffer + 8, R15
+   \   0001B0   0F5A         ADD.W   R10, R15
+   \   0001B2   FF9031000100 CMP.B   #0x31, 0x1(R15)
+   \   0001B8   EF20         JNE     ??response_handler_22
+   \   0001BA   1F42....     MOV.W   &response_buffer + 8, R15
+   \   0001BE   0F5A         ADD.W   R10, R15
+   \   0001C0   FF9032000200 CMP.B   #0x32, 0x2(R15)
+   \   0001C6   E820         JNE     ??response_handler_22
+   \   0001C8   1F42....     MOV.W   &response_buffer + 8, R15
+   \   0001CC   0F5A         ADD.W   R10, R15
+   \   0001CE   FF9031000300 CMP.B   #0x31, 0x3(R15)
+   \   0001D4   E120         JNE     ??response_handler_22
+   \   0001D6   1F42....     MOV.W   &response_buffer + 8, R15
+   \   0001DA   0F5A         ADD.W   R10, R15
+   \   0001DC   FF9030000400 CMP.B   #0x30, 0x4(R15)
+   \   0001E2   DA20         JNE     ??response_handler_22
+   \   0001E4   1F42....     MOV.W   &response_buffer + 8, R15
+   \   0001E8   0F5A         ADD.W   R10, R15
+   \   0001EA   FF900D000900 CMP.B   #0xd, 0x9(R15)
+   \   0001F0   D320         JNE     ??response_handler_22
+    114                    command_check_flag=ALWAYS;
+   \   0001F2   9243....     MOV.W   #0x1, &command_check_flag
+    115                    int index=j;
+    116                    if (!circle_timer_flag){
+   \   0001F6   8293....     CMP.W   #0x0, &circle_timer_flag
+   \   0001FA   1020         JNE     ??response_handler_23
+    117                      circle_timer_flag=ALWAYS;
+   \   0001FC   9243....     MOV.W   #0x1, &circle_timer_flag
+    118                      Circle_Timer=RESET_STATE;
+   \   000200   8243....     MOV.W   #0x0, &Circle_Timer
+    119                      strcpy(display_line[DISPLAY_lINE_0], "          ");
+   \   000204   3D40....     MOV.W   #`?<Constant "          ">`, R13
+   \   000208   3C40....     MOV.W   #display_line, R12
+   \   00020C   ........     CALLA   #strcpy
+    120                      strcpy(display_line[DISPLAY_lINE_3], "          ");
+   \   000210   3D40....     MOV.W   #`?<Constant "          ">`, R13
+   \   000214   3C40....     MOV.W   #display_line + 33, R12
+   \   000218   ........     CALLA   #strcpy
+    121                    }
+    122                    current_command[char_0]=response_buffer[custom_command][index++];
+   \                     ??response_handler_23:
+   \   00021C   1F42....     MOV.W   &response_buffer + 8, R15
+   \   000220   0F5A         ADD.W   R10, R15
+   \   000222   E24F....     MOV.B   @R15, &current_command
+   \   000226   1A53         ADD.W   #0x1, R10
+    123                    current_command[char_1]=response_buffer[custom_command][index++];
+   \   000228   1F42....     MOV.W   &response_buffer + 8, R15
+   \   00022C   0F5A         ADD.W   R10, R15
+   \   00022E   E24F....     MOV.B   @R15, &current_command + 1
+   \   000232   1A53         ADD.W   #0x1, R10
+    124                    current_command[char_2]=response_buffer[custom_command][index++];
+   \   000234   1F42....     MOV.W   &response_buffer + 8, R15
+   \   000238   0F5A         ADD.W   R10, R15
+   \   00023A   E24F....     MOV.B   @R15, &current_command + 2
+   \   00023E   1A53         ADD.W   #0x1, R10
+    125                    current_command[char_3]=response_buffer[custom_command][index++];
+   \   000240   1F42....     MOV.W   &response_buffer + 8, R15
+   \   000244   0F5A         ADD.W   R10, R15
+   \   000246   E24F....     MOV.B   @R15, &current_command + 3
+   \   00024A   1A53         ADD.W   #0x1, R10
+    126                    current_command[char_4]=response_buffer[custom_command][index++];
+   \   00024C   1F42....     MOV.W   &response_buffer + 8, R15
+   \   000250   0F5A         ADD.W   R10, R15
+   \   000252   E24F....     MOV.B   @R15, &current_command + 4
+   \   000256   1A53         ADD.W   #0x1, R10
+    127                    current_command[char_5]=response_buffer[custom_command][index++];
+   \   000258   1F42....     MOV.W   &response_buffer + 8, R15
+   \   00025C   0F5A         ADD.W   R10, R15
+   \   00025E   E24F....     MOV.B   @R15, &current_command + 5
+   \   000262   1A53         ADD.W   #0x1, R10
+    128                    current_command[char_6]=response_buffer[custom_command][index++];
+   \   000264   1F42....     MOV.W   &response_buffer + 8, R15
+   \   000268   0F5A         ADD.W   R10, R15
+   \   00026A   E24F....     MOV.B   @R15, &current_command + 6
+   \   00026E   1A53         ADD.W   #0x1, R10
+    129                    current_command[char_7]=response_buffer[custom_command][index++];
+   \   000270   1F42....     MOV.W   &response_buffer + 8, R15
+   \   000274   0F5A         ADD.W   R10, R15
+   \   000276   E24F....     MOV.B   @R15, &current_command + 7
+   \   00027A   1A53         ADD.W   #0x1, R10
+    130                    current_command[char_8]=response_buffer[custom_command][index++];
+   \   00027C   1F42....     MOV.W   &response_buffer + 8, R15
+   \   000280   0F5A         ADD.W   R10, R15
+   \   000282   E24F....     MOV.B   @R15, &current_command + 8
+   \   000286   1A53         ADD.W   #0x1, R10
+    131                    current_command[char_9]=response_buffer[custom_command][index++];
+   \   000288   1F42....     MOV.W   &response_buffer + 8, R15
+   \   00028C   0F5A         ADD.W   R10, R15
+   \   00028E   E24F....     MOV.B   @R15, &current_command + 9
+   \   000292   1A53         ADD.W   #0x1, R10
+    132          
+    133                     if (current_command[char_5]==D) { //display
+   \   000294   F2904400.... CMP.B   #0x44, &current_command + 5
+   \   00029A   6620         JNE     ??response_handler_24
+    134                      command=display_number;
+   \   00029C   B2400600.... MOV.W   #0x6, &command
+    135                      if (current_command[char_8]==num_1) strcpy(display_line[DISPLAY_lINE_0], "1         ");
+   \   0002A2   F2903100.... CMP.B   #0x31, &current_command + 8
+   \   0002A8   0720         JNE     ??response_handler_25
+   \   0002AA   3D40....     MOV.W   #`?<Constant "1         ">`, R13
+   \   0002AE   3C40....     MOV.W   #display_line, R12
+   \   0002B2   ........     CALLA   #strcpy
+   \   0002B6   693C         JMP     ??response_handler_12
+    136                      else if (current_command[char_8]==num_2) strcpy(display_line[DISPLAY_lINE_0], "2         ");
+   \                     ??response_handler_25:
+   \   0002B8   F2903200.... CMP.B   #0x32, &current_command + 8
+   \   0002BE   0720         JNE     ??response_handler_26
+   \   0002C0   3D40....     MOV.W   #`?<Constant "2         ">`, R13
+   \   0002C4   3C40....     MOV.W   #display_line, R12
+   \   0002C8   ........     CALLA   #strcpy
+   \   0002CC   5E3C         JMP     ??response_handler_12
+    137                      else if (current_command[char_8]==num_3) strcpy(display_line[DISPLAY_lINE_0], "3         ");
+   \                     ??response_handler_26:
+   \   0002CE   F2903300.... CMP.B   #0x33, &current_command + 8
+   \   0002D4   0720         JNE     ??response_handler_27
+   \   0002D6   3D40....     MOV.W   #`?<Constant "3         ">`, R13
+   \   0002DA   3C40....     MOV.W   #display_line, R12
+   \   0002DE   ........     CALLA   #strcpy
+   \   0002E2   533C         JMP     ??response_handler_12
+    138                      else if (current_command[char_8]==num_4) strcpy(display_line[DISPLAY_lINE_0], "4         ");
+   \                     ??response_handler_27:
+   \   0002E4   F2903400.... CMP.B   #0x34, &current_command + 8
+   \   0002EA   0720         JNE     ??response_handler_28
+   \   0002EC   3D40....     MOV.W   #`?<Constant "4         ">`, R13
+   \   0002F0   3C40....     MOV.W   #display_line, R12
+   \   0002F4   ........     CALLA   #strcpy
+   \   0002F8   483C         JMP     ??response_handler_12
+    139                      else if (current_command[char_8]==num_5) strcpy(display_line[DISPLAY_lINE_0], "5         ");
+   \                     ??response_handler_28:
+   \   0002FA   F2903500.... CMP.B   #0x35, &current_command + 8
+   \   000300   0720         JNE     ??response_handler_29
+   \   000302   3D40....     MOV.W   #`?<Constant "5         ">`, R13
+   \   000306   3C40....     MOV.W   #display_line, R12
+   \   00030A   ........     CALLA   #strcpy
+   \   00030E   3D3C         JMP     ??response_handler_12
+    140                      else if (current_command[char_8]==num_6) strcpy(display_line[DISPLAY_lINE_0], "6         ");
+   \                     ??response_handler_29:
+   \   000310   F2903600.... CMP.B   #0x36, &current_command + 8
+   \   000316   0720         JNE     ??response_handler_30
+   \   000318   3D40....     MOV.W   #`?<Constant "6         ">`, R13
+   \   00031C   3C40....     MOV.W   #display_line, R12
+   \   000320   ........     CALLA   #strcpy
+   \   000324   323C         JMP     ??response_handler_12
+    141                      else if (current_command[char_8]==num_7) strcpy(display_line[DISPLAY_lINE_0], "7         ");
+   \                     ??response_handler_30:
+   \   000326   F2903700.... CMP.B   #0x37, &current_command + 8
+   \   00032C   0720         JNE     ??response_handler_31
+   \   00032E   3D40....     MOV.W   #`?<Constant "7         ">`, R13
+   \   000332   3C40....     MOV.W   #display_line, R12
+   \   000336   ........     CALLA   #strcpy
+   \   00033A   273C         JMP     ??response_handler_12
+    142                      else if (current_command[char_8]==num_8) strcpy(display_line[DISPLAY_lINE_0], "8         ");
+   \                     ??response_handler_31:
+   \   00033C   F2903800.... CMP.B   #0x38, &current_command + 8
+   \   000342   0720         JNE     ??response_handler_32
+   \   000344   3D40....     MOV.W   #`?<Constant "8         ">`, R13
+   \   000348   3C40....     MOV.W   #display_line, R12
+   \   00034C   ........     CALLA   #strcpy
+   \   000350   1C3C         JMP     ??response_handler_12
+    143                      else if (current_command[char_8]==num_0) strcpy(display_line[DISPLAY_lINE_0], "0         ");
+   \                     ??response_handler_32:
+   \   000352   F2903000.... CMP.B   #0x30, &current_command + 8
+   \   000358   1820         JNE     ??response_handler_12
+   \   00035A   3D40....     MOV.W   #`?<Constant "0         ">`, R13
+   \   00035E   3C40....     MOV.W   #display_line, R12
+   \   000362   ........     CALLA   #strcpy
+   \   000366   113C         JMP     ??response_handler_12
+    144                      
+    145                    }
+    146                    else if (current_command[char_5]==B) command=black_line_navigation;
+   \                     ??response_handler_24:
+   \   000368   F2904200.... CMP.B   #0x42, &current_command + 5
+   \   00036E   0420         JNE     ??response_handler_33
+   \   000370   B2400700.... MOV.W   #0x7, &command
+   \   000376   093C         JMP     ??response_handler_12
+    147                    else{
+    148                      command=movements;
+   \                     ??response_handler_33:
+   \   000378   B2400500.... MOV.W   #0x5, &command
+    149                      direction=current_command[char_6];
+   \   00037E   D242........ MOV.B   &current_command + 6, &direction
+    150                      duration=current_command[char_8];
+   \   000384   D242........ MOV.B   &current_command + 8, &duration
+    151                    }
+    152                    command_received_internal=ALWAYS;
+   \                     ??response_handler_12:
+   \   00038A   9243....     MOV.W   #0x1, &command_received_internal
+    153                    custom_command_received=ALWAYS;
+   \   00038E   9243....     MOV.W   #0x1, &custom_command_received
+    154                    timer_flag=initial_state;
+   \   000392   8243....     MOV.W   #0x0, &timer_flag
+    155                    break;  
+   \   000396   043C         JMP     ??response_handler_6
+    156                  }
+    157                }
+   \                     ??response_handler_22:
+   \   000398   1A53         ADD.W   #0x1, R10
+   \   00039A   FE3E         JMP     ??response_handler_4
+    158                break;
+    159              default: 
+    160                iot_buffer_command_type_index=custom_command;
+   \                     ??response_handler_11:
+   \   00039C   A242....     MOV.W   #0x4, &iot_buffer_command_type_index
+    161                break;  
+    162            }  
+    163          }
+   \                     ??response_handler_6:
+   \   0003A0   3A41         POP.W   R10
+   \   0003A2   1001         RETA
+    164          
+    165          //IOT commands cycle
+
+   \                                 In  segment CODE, align 2
+    166          void Iot_cycle(void){
+   \                     Iot_cycle:
+    167            switch(command){
+   \   000000   1F42....     MOV.W   &command, R15
+   \   000004   0F83         SUB.W   #0x0, R15
+   \   000006   1324         JEQ     ??Iot_cycle_8
+   \   000008   1F83         SUB.W   #0x1, R15
+   \   00000A   2F24         JEQ     ??Iot_cycle_9
+   \   00000C   1F83         SUB.W   #0x1, R15
+   \   00000E   4824         JEQ     ??Iot_cycle_10
+   \   000010   1F83         SUB.W   #0x1, R15
+   \   000012   6124         JEQ     ??Iot_cycle_11
+   \   000014   1F83         SUB.W   #0x1, R15
+   \   000016   B124         JEQ     ??Iot_cycle_12
+   \   000018   1F83         SUB.W   #0x1, R15
+   \   00001A   C124         JEQ     ??Iot_cycle_13
+   \   00001C   1F83         SUB.W   #0x1, R15
+   \   00001E   E124         JEQ     ??Iot_cycle_14
+   \   000020   1F83         SUB.W   #0x1, R15
+   \   000022   E224         JEQ     ??Iot_cycle_15
+   \   000024   1F83         SUB.W   #0x1, R15
+   \   000026   E524         JEQ     ??Iot_cycle_16
+   \   000028   1F83         SUB.W   #0x1, R15
+   \   00002A   6624         JEQ     ??Iot_cycle_17
+   \   00002C   1001         RETA
+    168              case campus_profile: //campus profile command
+    169                if (!iot_ready) break;
+   \                     ??Iot_cycle_8:
+   \   00002E   8293....     CMP.W   #0x0, &iot_ready
+   \   000032   E124         JEQ     ??Iot_cycle_1
+    170                process_buffer1[i]=campus_profile_command[i];
+   \   000034   1F42....     MOV.W   &i, R15
+   \   000038   1E42....     MOV.W   &i, R14
+   \   00003C   DE4F........ MOV.B   campus_profile_command(R15), process_buffer1(R14)
+    171                i++;
+   \   000042   9253....     ADD.W   #0x1, &i
+    172                UCA0IE |= UCTXIE;
+   \   000046   A2D31A05     BIS.W   #0x2, &0x51a
+    173                if (i>current_command_size) {
+   \   00004A   B2900B00.... CMP.W   #0xb, &i
+   \   000050   D228         JNC     ??Iot_cycle_1
+    174                  i=initial_state;
+   \   000052   8243....     MOV.W   #0x0, &i
+    175                  command=response;
+   \   000056   B2400900.... MOV.W   #0x9, &command
+    176                  previous_state=campus_profile;
+   \   00005C   8243....     MOV.W   #0x0, &previous_state
+    177                  iot_buffer_response_index=initial_state;
+   \   000060   8243....     MOV.W   #0x0, &iot_buffer_response_index
+    178                  Movement_Timer=initial_state;
+   \   000064   8243....     MOV.W   #0x0, &Movement_Timer
+    179                }
+    180                break;
+   \   000068   1001         RETA
+    181              case reset_profile: //reset profile command
+    182                process_buffer1[i]=reset_command[i];
+   \                     ??Iot_cycle_9:
+   \   00006A   1F42....     MOV.W   &i, R15
+   \   00006E   1E42....     MOV.W   &i, R14
+   \   000072   DE4F........ MOV.B   reset_command(R15), process_buffer1(R14)
+    183                i++;
+   \   000078   9253....     ADD.W   #0x1, &i
+    184                UCA0IE |= UCTXIE;
+   \   00007C   A2D31A05     BIS.W   #0x2, &0x51a
+    185                if (i>current_command_size) {
+   \   000080   B2900B00.... CMP.W   #0xb, &i
+   \   000086   B728         JNC     ??Iot_cycle_1
+    186                  i=initial_state;
+   \   000088   8243....     MOV.W   #0x0, &i
+    187                  command=response;
+   \   00008C   B2400900.... MOV.W   #0x9, &command
+    188                  previous_state=reset_profile;
+   \   000092   9243....     MOV.W   #0x1, &previous_state
+    189                  iot_buffer_response_index=initial_state;
+   \   000096   8243....     MOV.W   #0x0, &iot_buffer_response_index
+    190                  Movement_Timer=initial_state;
+   \   00009A   8243....     MOV.W   #0x0, &Movement_Timer
+    191                }
+    192                break;
+   \   00009E   1001         RETA
+    193              case tcp_server:  //starting tcp server command
+    194                process_buffer1[i]=tcp_server_command[i];
+   \                     ??Iot_cycle_10:
+   \   0000A0   1F42....     MOV.W   &i, R15
+   \   0000A4   1E42....     MOV.W   &i, R14
+   \   0000A8   DE4F........ MOV.B   tcp_server_command(R15), process_buffer1(R14)
+    195                i++;
+   \   0000AE   9253....     ADD.W   #0x1, &i
+    196                UCA0IE |= UCTXIE;
+   \   0000B2   A2D31A05     BIS.W   #0x2, &0x51a
+    197                if (i>current_command_size) {
+   \   0000B6   B2900B00.... CMP.W   #0xb, &i
+   \   0000BC   9C28         JNC     ??Iot_cycle_1
+    198                  i=initial_state;
+   \   0000BE   8243....     MOV.W   #0x0, &i
+    199                  command=response;
+   \   0000C2   B2400900.... MOV.W   #0x9, &command
+    200                  previous_state=tcp_server;
+   \   0000C8   A243....     MOV.W   #0x2, &previous_state
+    201                  iot_buffer_response_index=initial_state;
+   \   0000CC   8243....     MOV.W   #0x0, &iot_buffer_response_index
+    202                  Movement_Timer=initial_state;
+   \   0000D0   8243....     MOV.W   #0x0, &Movement_Timer
+    203                }
+    204                break;
+   \   0000D4   1001         RETA
+    205              case tcp_client:
+    206                if (!receive_flag) {
+   \                     ??Iot_cycle_11:
+   \   0000D6   8293....     CMP.W   #0x0, &receive_flag
+   \   0000DA   0320         JNE     ??Iot_cycle_18
+    207                  iot_buffer_response_index=initial_state;
+   \   0000DC   8243....     MOV.W   #0x0, &iot_buffer_response_index
+    208                  break;  
+   \   0000E0   1001         RETA
+    209                } 
+    210                command=response;
+   \                     ??Iot_cycle_18:
+   \   0000E2   B2400900.... MOV.W   #0x9, &command
+    211                previous_state=tcp_client;
+   \   0000E8   B2400300.... MOV.W   #0x3, &previous_state
+    212                iot_buffer_response_index=initial_state;
+   \   0000EE   8243....     MOV.W   #0x0, &iot_buffer_response_index
+    213                Movement_Timer=initial_state;
+   \   0000F2   8243....     MOV.W   #0x0, &Movement_Timer
+    214                break;  
+   \   0000F6   1001         RETA
+    215              case response: // response handling state
+    216                if (command_check_flag!=TRUE) response_handler();
+   \                     ??Iot_cycle_17:
+   \   0000F8   9293....     CMP.W   #0x1, &command_check_flag
+   \   0000FC   0224         JEQ     ??Iot_cycle_19
+   \   0000FE   ........     CALLA   #response_handler
+    217                
+    218                if (previous_state==custom_command && command_check_flag){
+   \                     ??Iot_cycle_19:
+   \   000102   A292....     CMP.W   #0x4, &previous_state
+   \   000106   0C20         JNE     ??Iot_cycle_20
+   \   000108   8293....     CMP.W   #0x0, &command_check_flag
+   \   00010C   0924         JEQ     ??Iot_cycle_20
+    219                  command_check_flag=initial_state;
+   \   00010E   8243....     MOV.W   #0x0, &command_check_flag
+    220                  timer_flag=initial_state;
+   \   000112   8243....     MOV.W   #0x0, &timer_flag
+    221                  iot_buffer_response_index=initial_state;
+   \   000116   8243....     MOV.W   #0x0, &iot_buffer_response_index
+    222                  receive_flag=initial_state;
+   \   00011A   8243....     MOV.W   #0x0, &receive_flag
+    223                  break;
+   \   00011E   1001         RETA
+    224                }
+    225                else if (!timer_flag && !high_flag) wait(seconds_2);
+                                                           ^
+Warning[Pe223]: function "wait" declared implicitly
+   \                     ??Iot_cycle_20:
+   \   000120   8293....     CMP.W   #0x0, &timer_flag
+   \   000124   0720         JNE     ??Iot_cycle_21
+   \   000126   8293....     CMP.W   #0x0, &high_flag
+   \   00012A   0420         JNE     ??Iot_cycle_21
+   \   00012C   2C43         MOV.W   #0x2, R12
+   \   00012E   ........     CALLA   #wait
+   \   000132   1001         RETA
+    226                else if (timer_flag && command_check_flag==RESET_STATE) {
+   \                     ??Iot_cycle_21:
+   \   000134   8293....     CMP.W   #0x0, &timer_flag
+   \   000138   0924         JEQ     ??Iot_cycle_22
+   \   00013A   8293....     CMP.W   #0x0, &command_check_flag
+   \   00013E   0620         JNE     ??Iot_cycle_22
+    227                  command=previous_state;
+   \   000140   9242........ MOV.W   &previous_state, &command
+    228                  timer_flag=initial_state;
+   \   000146   8243....     MOV.W   #0x0, &timer_flag
+   \   00014A   1001         RETA
+    229                }  
+    230                else if (timer_flag && command_check_flag==ALWAYS) {
+   \                     ??Iot_cycle_22:
+   \   00014C   8293....     CMP.W   #0x0, &timer_flag
+   \   000150   5224         JEQ     ??Iot_cycle_1
+   \   000152   9293....     CMP.W   #0x1, &command_check_flag
+   \   000156   4F20         JNE     ??Iot_cycle_1
+    231                  command=previous_state+incrementer;
+   \   000158   1F42....     MOV.W   &previous_state, R15
+   \   00015C   1F53         ADD.W   #0x1, R15
+   \   00015E   824F....     MOV.W   R15, &command
+    232                  iot_buffer_command_type_index=previous_state+incrementer;
+   \   000162   1F42....     MOV.W   &previous_state, R15
+   \   000166   1F53         ADD.W   #0x1, R15
+   \   000168   824F....     MOV.W   R15, &iot_buffer_command_type_index
+    233                  command_check_flag=BEGINNING;
+   \   00016C   8243....     MOV.W   #0x0, &command_check_flag
+    234                  timer_flag=BEGINNING;
+   \   000170   8243....     MOV.W   #0x0, &timer_flag
+    235                  receive_flag=BEGINNING;
+   \   000174   8243....     MOV.W   #0x0, &receive_flag
+    236                }  
+    237                break;  
+   \   000178   1001         RETA
+    238              case custom_command: //Custom commands received from tcp client
+    239                high_flag=ALWAYS;
+   \                     ??Iot_cycle_12:
+   \   00017A   9243....     MOV.W   #0x1, &high_flag
+    240                if (!receive_flag) {
+   \   00017E   8293....     CMP.W   #0x0, &receive_flag
+   \   000182   0320         JNE     ??Iot_cycle_23
+    241                  iot_buffer_response_index=BEGINNING;
+   \   000184   8243....     MOV.W   #0x0, &iot_buffer_response_index
+    242                  break;  
+   \   000188   1001         RETA
+    243                }
+    244                command=response;
+   \                     ??Iot_cycle_23:
+   \   00018A   B2400900.... MOV.W   #0x9, &command
+    245                previous_state=custom_command;
+   \   000190   A242....     MOV.W   #0x4, &previous_state
+    246                iot_buffer_response_index=BEGINNING;
+   \   000194   8243....     MOV.W   #0x0, &iot_buffer_response_index
+    247                Movement_Timer=BEGINNING;
+   \   000198   8243....     MOV.W   #0x0, &Movement_Timer
+    248                break;
+   \   00019C   1001         RETA
+    249              case movements: //State for handling all timed movements for iot track
+    250                if (timer_flag) {
+   \                     ??Iot_cycle_13:
+   \   00019E   8293....     CMP.W   #0x0, &timer_flag
+   \   0001A2   1624         JEQ     ??Iot_cycle_24
+    251                  stop_all_motors();
+                         ^
+Warning[Pe223]: function "stop_all_motors" declared implicitly
+   \   0001A4   ........     CALLA   #stop_all_motors
+    252                  command=custom_command;
+   \   0001A8   A242....     MOV.W   #0x4, &command
+    253                  command_received_internal=BEGINNING;
+   \   0001AC   8243....     MOV.W   #0x0, &command_received_internal
+    254                  timer_flag=BEGINNING;
+   \   0001B0   8243....     MOV.W   #0x0, &timer_flag
+    255                  for (int i=BEGINNING;i<custom_command_response_size;i++) {
+   \   0001B4   0F43         MOV.W   #0x0, R15
+   \                     ??Iot_cycle_0:
+   \   0001B6   3F902300     CMP.W   #0x23, R15
+   \   0001BA   0434         JGE     ??Iot_cycle_25
+    256                    custom_command_response[i]=NULL;
+   \   0001BC   CF43....     MOV.B   #0x0, custom_command_response(R15)
+    257                  }
+   \   0001C0   1F53         ADD.W   #0x1, R15
+   \   0001C2   F93F         JMP     ??Iot_cycle_0
+    258                  if (exit_flag) { //exit circle
+   \                     ??Iot_cycle_25:
+   \   0001C4   8293....     CMP.W   #0x0, &exit_flag
+   \   0001C8   1624         JEQ     ??Iot_cycle_1
+    259                    command=end;
+   \   0001CA   B242....     MOV.W   #0x8, &command
+    260                  }
+    261                  break;
+   \   0001CE   1001         RETA
+    262                }
+    263                movement(direction, duration);
+                       ^
+Warning[Pe223]: function "movement" declared implicitly
+   \                     ??Iot_cycle_24:
+   \   0001D0   5D42....     MOV.B   &duration, R13
+   \   0001D4   4D4D         MOV.B   R13, R13
+   \   0001D6   5C42....     MOV.B   &direction, R12
+   \   0001DA   4C4C         MOV.B   R12, R12
+   \   0001DC   ........     CALLA   #movement
+    264                break;
+   \   0001E0   1001         RETA
+    265              case display_number: //displaying number on square
+    266                command=custom_command;
+   \                     ??Iot_cycle_14:
+   \   0001E2   A242....     MOV.W   #0x4, &command
+    267                break;
+   \   0001E6   1001         RETA
+    268              case black_line_navigation:    //Black line course handling state
+    269                line_traversal();
+                       ^
+Warning[Pe223]: function "line_traversal" declared implicitly
+   \                     ??Iot_cycle_15:
+   \   0001E8   ........     CALLA   #line_traversal
+    270                command=end;
+   \   0001EC   B242....     MOV.W   #0x8, &command
+    271                break;
+   \   0001F0   1001         RETA
+    272              case end: 
+    273                stop_all_motors();
+                       ^
+Warning[Pe223]: function "stop_all_motors" declared implicitly
+   \                     ??Iot_cycle_16:
+   \   0001F2   ........     CALLA   #stop_all_motors
+    274                break;
+    275              default: break;   
+    276            }  
+    277          }  
+   \                     ??Iot_cycle_1:
+   \   0001F6   1001         RETA
+   \   0001F8                REQUIRE _A_UCA0IE_L
+
+   \                                 In  segment DATA16_ID, align 1, align-sorted
+   \                     `?<Initializer for campus_profile_command>`:
+   \   000000   0D4154265730 DC8 "\015AT&W0\015"
+   \            0D00        
+
+   \                                 In  segment DATA16_ID, align 1, align-sorted
+   \                     `?<Initializer for reset_command>`:
+   \   000000   0D41542B5245 DC8 "\015AT+RESET=1\015"
+   \            5345543D310D
+   \            00          
+
+   \                                 In  segment DATA16_ID, align 1, align-sorted
+   \                     `?<Initializer for tcp_server_command>`:
+   \   000000   0D41542B4E53 DC8 "\015AT+NSTCP=1210,1\015"
+   \            5443503D3132
+   \            31302C310D00
+
+   \                                 In  segment DATA16_ID, align 2, align-sorted
+   \                     `?<Initializer for response_buffer>`:
+   \   000000   ............ DC16 campus_profile_response, reset_response, tcp_server_response
+   \   000006   ........     DC16 tcp_client_connect_response, custom_command_response
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "          ">`:
+   \   000000   202020202020 DC8 "          "
+   \            2020202000  
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "1         ">`:
+   \   000000   312020202020 DC8 "1         "
+   \            2020202000  
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "2         ">`:
+   \   000000   322020202020 DC8 "2         "
+   \            2020202000  
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "3         ">`:
+   \   000000   332020202020 DC8 "3         "
+   \            2020202000  
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "4         ">`:
+   \   000000   342020202020 DC8 "4         "
+   \            2020202000  
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "5         ">`:
+   \   000000   352020202020 DC8 "5         "
+   \            2020202000  
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "6         ">`:
+   \   000000   362020202020 DC8 "6         "
+   \            2020202000  
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "7         ">`:
+   \   000000   372020202020 DC8 "7         "
+   \            2020202000  
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "8         ">`:
+   \   000000   382020202020 DC8 "8         "
+   \            2020202000  
+
+   \                                 In  segment DATA16_C, align 1, align-sorted
+   \                     `?<Constant "0         ">`:
+   \   000000   302020202020 DC8 "0         "
+   \            2020202000  
+
+   Maximum stack usage in bytes:
+
+   CSTACK Function
+   ------ --------
+      4   Iot_cycle
+        4   -> line_traversal
+        4   -> movement
+        4   -> response_handler
+        4   -> stop_all_motors
+        4   -> wait
+      6   response_handler
+        6   -> strcpy
+
+
+   Segment part sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      11  ?<Constant "          ">
+      11  ?<Constant "0         ">
+      11  ?<Constant "1         ">
+      11  ?<Constant "2         ">
+      11  ?<Constant "3         ">
+      11  ?<Constant "4         ">
+      11  ?<Constant "5         ">
+      11  ?<Constant "6         ">
+      11  ?<Constant "7         ">
+      11  ?<Constant "8         ">
+       8  ?<Initializer for campus_profile_command>
+      13  ?<Initializer for reset_command>
+      10  ?<Initializer for response_buffer>
+      18  ?<Initializer for tcp_server_command>
+     504  Iot_cycle
+       2  _A_UCA0IE_L
+       8  campus_profile_command
+      50  campus_profile_response
+       2  command
+       2  command_check_flag
+       2  command_received_internal
+      10  current_command
+       2  custom_command_received
+      35  custom_command_response
+       1  direction
+       1  duration
+       2  exit_flag
+       2  high_flag
+       2  i
+       2  iot_buffer_command_type_index
+       2  iot_buffer_response_index
+       2  iot_initialized
+      13  ip_address
+       2  previous_state
+      13  reset_command
+     150  reset_response
+      10  response_buffer
+     932  response_handler
+      50  tcp_client_connect_response
+      18  tcp_server_command
+     150  tcp_server_response
+
+ 
+ 1 436 bytes in segment CODE
+     2 bytes in segment DATA16_AN
+   110 bytes in segment DATA16_C
+    49 bytes in segment DATA16_I
+    49 bytes in segment DATA16_ID
+   482 bytes in segment DATA16_Z
+ 
+ 1 436 bytes of CODE  memory
+   159 bytes of CONST memory
+   531 bytes of DATA  memory (+ 2 bytes shared)
+
+Errors: none
+Warnings: 6
