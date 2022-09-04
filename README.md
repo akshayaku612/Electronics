@@ -3,6 +3,8 @@ Below is a list of some of the projects I worked on in various applications of E
 
 ## 1) [Hardware Modelling](https://github.com/akshayks612/Electronics/tree/verilog)
 
+* Binary Artificial Neural Network - Verilog and Synopsys
+* Bimodal and GShare Branch Predictor - C++
 * CPU Design - Verilog
 * Public Key Encryption - Verilog
 * Low Pass Filter Model - COMSOL
